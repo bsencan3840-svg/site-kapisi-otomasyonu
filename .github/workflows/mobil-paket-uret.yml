@@ -1,0 +1,66 @@
+name: Android ve iOS Uygulama Paketi Üret
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  android-paketi-uret:
+    name: Android Kurulum Dosyası (.apk) Üret
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Paketleri Kur ve Android Projesini Oluştur
+        run: |
+          npm install
+          npx cap add android
+          # Arka plan 10m konum izinlerini AndroidManifest içine ekle
+          sed -i 's/<\/manifest>/<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" \/><uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" \/><uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" \/><uses-permission android:name="android.permission.FOREGROUND_SERVICE" \/><uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" \/><uses-permission android:name="android.permission.WAKE_LOCK" \/><\/manifest>/' android/app/src/main/AndroidManifest.xml
+          npx cap sync android
+      - name: Android Uygulamasını Derle
+        working-directory: android
+        run: ./gradlew assembleDebug
+      - name: İndirilebilir Android Uygulaması (.apk)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Site-Kapisi-Android-Uygulamasi
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+
+  ios-paketi-uret:
+    name: iPhone (iOS) Uygulama Paketi Üret
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Paketleri Kur ve iOS Projesini Oluştur
+        run: |
+          npm install
+          npx cap add ios
+          # iPhone arka plan konum izinlerini Info.plist içine ekle
+          /usr/libexec/PlistBuddy -c "Add :NSLocationWhenInUseUsageDescription string 'Site kapısına mesafenizi ölçmek için konum izni gereklidir.'" ios/App/App/Info.plist || true
+          /usr/libexec/PlistBuddy -c "Add :NSLocationAlwaysAndWhenInUseUsageDescription string 'Site kapısına 10 metre yaklaştığınızda arka planda otomatik açmak için Her Zaman konum izni gereklidir.'" ios/App/App/Info.plist || true
+          /usr/libexec/PlistBuddy -c "Add :UIBackgroundModes array" ios/App/App/Info.plist || true
+          /usr/libexec/PlistBuddy -c "Add :UIBackgroundModes:0 string location" ios/App/App/Info.plist || true
+          npx cap sync ios
+      - name: iOS Derlemesini Oluştur (İmzasız Paket)
+        working-directory: ios/App
+        run: |
+          xcodebuild -project App.xcodeproj -scheme App -configuration Release -sdk iphoneos -derivedDataPath build CODE_SIGNING_ALLOWED=NO
+          mkdir -p Payload
+          cp -r build/Build/Products/Release-iphoneos/App.app Payload/
+          zip -r Site-Kapisi-iOS.ipa Payload
+      - name: İndirilebilir iPhone Uygulaması (.ipa)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Site-Kapisi-iPhone-Uygulamasi
+          path: ios/App/Site-Kapisi-iOS.ipa
