@@ -1,7 +1,7 @@
 {
   "name": "Site Kapısı Otomasyonu",
   "short_name": "Site Kapısı",
-  "description": "Site kapısına 10 metre yaklaşınca Smart Life üzerinden otomatik kapı açıcı",
+  "description": "Site kapısına 2 metre yaklaşınca Smart Life üzerinden otomatik kapı açıcı",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0b1120",

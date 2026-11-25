@@ -78,6 +78,8 @@ const SILINENLER = ['uygulama/tuyaBaglantisi.js'];
   const parentSha = ref.object.sha;
   const mevcutCommit = await istek(`/repos/${REPO}/git/commits/${parentSha}`);
   const baseTree = mevcutCommit.tree.sha;
+  const mevcutAgac = await istek(`/repos/${REPO}/git/trees/${baseTree}?recursive=1`);
+  const mevcutYollar = new Set((mevcutAgac.tree || []).filter((x) => x.type === 'blob').map((x) => x.path));
 
   const agac = [];
   for (const dosya of DOSYALAR) {
@@ -87,13 +89,15 @@ const SILINENLER = ['uygulama/tuyaBaglantisi.js'];
     console.log('  + ' + dosya);
   }
   for (const dosya of SILINENLER) {
-    agac.push({ path: dosya, mode: '100644', type: 'blob', sha: null });
-    console.log('  - ' + dosya);
+    if (mevcutYollar.has(dosya)) {
+      agac.push({ path: dosya, mode: '100644', type: 'blob', sha: null });
+      console.log('  - ' + dosya);
+    }
   }
 
   const yeniAgac = await istek(`/repos/${REPO}/git/trees`, 'POST', { base_tree: baseTree, tree: agac });
   const yeniCommit = await istek(`/repos/${REPO}/git/commits`, 'POST', {
-    message: 'Tek Smart Life ID akışı, Vercel canlı dağıtımı ve mesafe hesaplama düzeltmesi',
+    message: '2 metre tolerans, yeni arayüz tasarımı ve tek Smart Life ID akışı',
     parents: [parentSha],
     tree: yeniAgac.sha,
   });

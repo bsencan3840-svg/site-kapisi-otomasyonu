@@ -91,16 +91,18 @@ const TB = require('../uygulama/smartLifeBaglantisi.js');
   KM.kapiyiKalibreEt(41.0082, 28.9784); // gerçek uygulamada "Şimdi Aç" ile otomatik olur
   assert.strictEqual(KM.kalibrasyonVarMi(), true);
 
-  await KM.mesafeyiDegerlendir(5, 3);
+  await KM.mesafeyiDegerlendir(3, 3);
+  assert.strictEqual(acmaSayisi, 0, '2m tolerans dışında (3m) kapı açılmamalı');
+  await KM.mesafeyiDegerlendir(1, 3);
   assert.strictEqual(acmaSayisi, 1);
   assert.strictEqual(KM.durumuYukle().korumaKilidiAktif, true);
-  await KM.mesafeyiDegerlendir(5, 3);
+  await KM.mesafeyiDegerlendir(1, 3);
   assert.strictEqual(acmaSayisi, 1, 'koruma kilidi tekrar açma yapmamalı');
   await KM.mesafeyiDegerlendir(85, 3);
   assert.strictEqual(KM.durumuYukle().korumaKilidiAktif, false);
-  await KM.mesafeyiDegerlendir(5, 3);
+  await KM.mesafeyiDegerlendir(1, 3);
   assert.strictEqual(KM.durumuYukle().sonAcilmaZamani > 0, true);
-  console.log('✓ 10m tetikleme, koruma kilidi ve 80m sıfırlama çalışıyor');
+  console.log('✓ 2m tolerans tetiklemesi, koruma kilidi ve 80m sıfırlama çalışıyor');
 
   // 7) Kalibrasyon yokken (0,0)'a sahte mesafe gösterilmemeli
   KM.kalibrasyonuSifirla();
@@ -114,7 +116,7 @@ const TB = require('../uygulama/smartLifeBaglantisi.js');
   KM.korumaKilidiniSifirla();
   const acmaOnce = acmaSayisi;
   KM.simulasyonModu = true;
-  await KM.mesafeyiDegerlendir(4, 2);
+  await KM.mesafeyiDegerlendir(1, 2);
   assert.strictEqual(acmaSayisi, acmaOnce, 'test modu gerçek kapıya komut göndermemeli');
   assert.strictEqual(KM.durumuYukle().korumaKilidiAktif, true);
   assert.strictEqual(KM.ayarlariYukle().kapiEnlem, 41.0082, 'test modu kalibrasyonu değiştirmemeli');

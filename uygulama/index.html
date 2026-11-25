@@ -18,30 +18,41 @@
   <div class="app-shell">
     <header class="topbar">
       <div class="brand">
-        <div class="brand-mark">🚗</div>
+        <div class="brand-mark">
+          <svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 14v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+        </div>
         <div>
           <h1>Site Kapısı</h1>
-          <p>Smart Life • 10 m Otomatik Açıcı</p>
+          <p>Smart Life • 2 m Otomatik Açıcı</p>
         </div>
       </div>
-      <div id="servisEtiketi" class="status-pill">DURDURULDU</div>
+      <div id="servisEtiketi" class="status-pill"><span class="dot"></span><span id="servisYazi">DURDURULDU</span></div>
     </header>
 
     <main>
       <!-- ANA EKRAN -->
       <section id="sekme-ana" class="sekme-icerik aktif">
         <div id="radarKarti" class="hero">
-          <div class="radar">
-            <div class="radar-rings"><span></span><span></span><span></span></div>
-            <div class="radar-dot"></div>
-            <div class="radar-center">
-              <span class="radar-label">KAPIYA MESAFE</span>
-              <div id="mesafeDegeri" class="radar-value">--</div>
-              <span id="mesafeBirimi" class="radar-unit">METRE</span>
-            </div>
+          <div class="hero-top">
+            <span class="hero-kaption">KAPIYA OLAN UZAKLIK</span>
+            <span id="durumRozeti" class="hero-badge">KONUM BEKLENİYOR</span>
           </div>
+
+          <div class="distance">
+            <span id="mesafeDegeri" class="distance-value">--</span>
+            <span id="mesafeBirimi" class="distance-unit">METRE</span>
+          </div>
+
+          <div class="track">
+            <div class="track-line">
+              <div id="trackDolu" class="track-fill"></div>
+              <div id="trackNokta" class="track-dot"></div>
+            </div>
+            <div class="track-labels"><span>Uzak</span><span>Kapıya yaklaşıyorsunuz</span><span>Kapı</span></div>
+          </div>
+
           <div id="durumAciklama" class="hero-status">Smart Life ID'nizi girin.</div>
-          <div id="hassasiyetBilgi" class="hero-meta">Açılma Sınırı: ≤ 10 metre</div>
+          <div id="hassasiyetBilgi" class="hero-meta">Açılma Sınırı: ≤ 2 metre</div>
 
           <div id="kilitKutusu" class="lock-note" style="display: none;">
             <p id="kilitAciklama">Kapı açıldı. 80 metre uzaklaştığınızda otomatik yeniden kurulur.</p>
@@ -49,25 +60,31 @@
           </div>
         </div>
 
-        <button id="takipButonu" class="btn btn-primary" onclick="takibiDegistir()">
-          🚀 Otomatik Açıcıyı Başlat
-        </button>
-        <button class="btn btn-ghost" onclick="kapiyiElleAc()">
-          🔓 Site Kapısını Şimdi Aç
-        </button>
+        <div class="action-row">
+          <button id="takipButonu" class="btn btn-primary" onclick="takibiDegistir()">
+            <span id="takipIkon"><svg viewBox="0 0 24 24"><path d="m13 2-9 12h7l-1 8 9-12h-7l1-8Z"/></svg></span>
+            <span id="takipEtiket">2 m Otomatik Açıcıyı Başlat</span>
+          </button>
+          <button class="btn btn-outline" onclick="kapiyiElleAc()">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+            <span>Şimdi Aç</span>
+          </button>
+        </div>
 
         <!-- TEK KURULUM ALANI -->
         <div class="panel">
           <div class="panel-head">
-            <div class="panel-icon">🔑</div>
-            <div style="flex: 1;">
+            <div class="panel-icon">
+              <svg viewBox="0 0 24 24"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"/></svg>
+            </div>
+            <div class="panel-title">
               <h2>Tek Kurulum</h2>
               <p>Smart Life ID'nizi girin. Başka bir şey girmenize gerek yok; kapı konumunu ve ayarları uygulama kendiliğinden halleder.</p>
             </div>
           </div>
           <label class="field-label" for="girdiSmartLifeId">Smart Life ID</label>
           <div class="input-wrap">
-            <span>🆔</span>
+            <svg viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg>
             <input
               type="text"
               id="girdiSmartLifeId"
@@ -78,24 +95,30 @@
               onchange="smartLifeIdKaydet()"
             />
           </div>
-          <button class="btn btn-save" onclick="smartLifeIdKaydet()">💾 ID'yi Kaydet</button>
-          <button class="btn btn-ghost" onclick="konumuSifirla()">📍 Kapı Konumunu Yeniden Öğren</button>
+          <button class="btn btn-save" onclick="smartLifeIdKaydet()">
+            <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+            <span>ID'yi Kaydet</span>
+          </button>
+          <button class="link-btn" onclick="konumuSifirla()">📍 Kapı Konumunu Yeniden Öğren</button>
         </div>
 
         <!-- TEST SİMÜLATÖRÜ -->
         <div class="panel">
           <div class="panel-head">
-            <div class="panel-icon">🚘</div>
-            <div style="flex: 1;">
+            <div class="panel-icon">
+              <svg viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+            </div>
+            <div class="panel-title">
               <h2>Yaklaşma Testi</h2>
-              <p>Dışarı çıkmadan denemek için test modunu açın ve çubuğu 10 metrenin altına çekin.</p>
+              <p>Dışarı çıkmadan denemek için test modunu açın ve çubuğu 2 metrenin altına çekin.</p>
             </div>
           </div>
-          <div class="switches">
-            <span class="switch-label">Test modu</span>
+          <div class="switch-row">
+            <span>Test modu</span>
             <input type="checkbox" id="simulatorAnahtari" class="switch" onchange="simulatorDegistir(this.checked)" />
           </div>
           <div id="simulatorAlani" class="sim-area" style="display: none;">
+            <div class="sim-head"><strong id="simMesafe">95 m</strong><small>Kapıya uzaklık</small></div>
             <input
               type="range"
               id="simulatorCubugu"
@@ -107,7 +130,7 @@
             />
             <div class="scale">
               <span>0m (Kapı)</span>
-              <span>10m (Açılır)</span>
+              <span>2m (Açılır)</span>
               <span>80m+ (Sıfırlanır)</span>
             </div>
           </div>
@@ -118,8 +141,10 @@
       <section id="sekme-gecmis" class="sekme-icerik">
         <div class="panel">
           <div class="panel-head">
-            <div class="panel-icon">📋</div>
-            <div style="flex: 1;">
+            <div class="panel-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            </div>
+            <div class="panel-title">
               <h2>Açılma Geçmişi</h2>
               <p>Son işlemler yalnızca bu cihazda saklanır.</p>
             </div>
@@ -132,11 +157,11 @@
 
     <nav class="bottom-nav">
       <button id="menu-ana" class="nav-btn aktif" onclick="sekmeAc('ana')">
-        <span class="ikon">📡</span>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48M7.76 16.24a6 6 0 0 1 0-8.48M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg>
         <span>Ana Ekran</span>
       </button>
       <button id="menu-gecmis" class="nav-btn" onclick="sekmeAc('gecmis')">
-        <span class="ikon">📋</span>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
         <span>Geçmiş (<span id="kayitSayaci">0</span>)</span>
       </button>
     </nav>
@@ -146,6 +171,9 @@
   <script src="smartLifeBaglantisi.js"></script>
   <script src="kapiMotoru.js"></script>
   <script>
+    const IKON_BASLAT = '<svg viewBox="0 0 24 24"><path d="m13 2-9 12h7l-1 8 9-12h-7l1-8Z"/></svg>';
+    const IKON_DURDUR = '<svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>';
+
     function balonGoster(metin, tur = 'basari') {
       const b = document.getElementById('bildirimBalonu');
       b.textContent = metin;
@@ -174,11 +202,12 @@
     function arayuzuGuncelle(durum) {
       const ayar = KapiMotoru.ayarlariYukle();
       const mesafe = durum.sonMesafeMetre;
-      const iceride = Number.isFinite(mesafe) && mesafe <= ayar.acilmaMesafesiMetre;
+      const mesafeGecerli = Number.isFinite(mesafe);
+      const iceride = mesafeGecerli && mesafe <= ayar.acilmaMesafesiMetre;
 
       const mesafeDegeri = document.getElementById('mesafeDegeri');
       const mesafeBirimi = document.getElementById('mesafeBirimi');
-      if (mesafe === null || mesafe === undefined || !Number.isFinite(mesafe)) {
+      if (!mesafeGecerli) {
         mesafeDegeri.textContent = '--';
         mesafeBirimi.textContent = 'METRE';
       } else if (mesafe >= 1000) {
@@ -188,6 +217,19 @@
         mesafeDegeri.textContent = String(mesafe);
         mesafeBirimi.textContent = 'METRE';
       }
+
+      // Üst rozet: yakınlık durumu
+      const rozet = document.getElementById('durumRozeti');
+      rozet.textContent = !mesafeGecerli ? 'KONUM BEKLENİYOR' : iceride ? 'AÇILMA ALANINDA' : 'YAKLAŞIYORSUNUZ';
+
+      // Mesafe çubuğu: uzaktan kapıya doğru ilerler
+      const doluluk = mesafeGecerli
+        ? Math.max(0, Math.min(100,
+            ((ayar.sifirlamaMesafesiMetre - mesafe) / (ayar.sifirlamaMesafesiMetre - ayar.acilmaMesafesiMetre)) * 100))
+        : 0;
+      document.getElementById('trackDolu').style.width = doluluk + '%';
+      document.getElementById('trackNokta').style.left = doluluk + '%';
+
       document.getElementById('durumAciklama').textContent = durum.durumMesaji || '';
       document.getElementById('radarKarti').classList.toggle('is-near', iceride);
       document.getElementById('hassasiyetBilgi').textContent =
@@ -199,16 +241,17 @@
         `Kapı açıldı. ${ayar.sifirlamaMesafesiMetre} metre uzaklaştığınızda otomatik yeniden kurulur.`;
 
       const aktif = KapiMotoru.calisiyorMu || KapiMotoru.simulasyonModu;
-      const etiket = document.getElementById('servisEtiketi');
-      etiket.textContent = aktif ? 'TAKİP AKTİF' : 'DURDURULDU';
-      etiket.classList.toggle('is-active', aktif);
+      document.getElementById('servisYazi').textContent = aktif ? 'TAKİP AKTİF' : 'DURDURULDU';
+      document.getElementById('servisEtiketi').classList.toggle('is-active', aktif);
 
       const buton = document.getElementById('takipButonu');
       if (KapiMotoru.calisiyorMu) {
-        buton.textContent = '⏹️ Otomatik Kapı Açıcıyı Durdur';
+        document.getElementById('takipEtiket').textContent = 'Otomatik Açıcıyı Durdur';
+        document.getElementById('takipIkon').innerHTML = IKON_DURDUR;
         buton.className = 'btn btn-danger';
       } else {
-        buton.textContent = `🚀 ${ayar.acilmaMesafesiMetre} Metre Otomatik Açıcıyı Başlat`;
+        document.getElementById('takipEtiket').textContent = `${ayar.acilmaMesafesiMetre} m Otomatik Açıcıyı Başlat`;
+        document.getElementById('takipIkon').innerHTML = IKON_BASLAT;
         buton.className = 'btn btn-primary';
       }
 
@@ -275,7 +318,7 @@
       document.getElementById('simulatorAlani').style.display = aktif ? 'block' : 'none';
       if (aktif) {
         // Gerçek kapı koordinatı asla değiştirilmez; test tamamen sanal mesafe ile yapılır.
-        KapiMotoru.mesafeyiDegerlendir(parseFloat(document.getElementById('simulatorCubugu').value), 2);
+        simulatorMesafeGuncelle(document.getElementById('simulatorCubugu').value);
       } else {
         const durum = KapiMotoru.durumuYukle();
         durum.sonMesafeMetre = null;
@@ -295,12 +338,15 @@
     }
 
     function simulatorMesafeGuncelle(deger) {
-      KapiMotoru.mesafeyiDegerlendir(parseFloat(deger), 2);
+      const m = parseFloat(deger);
+      document.getElementById('simMesafe').textContent = m >= 1000 ? (m / 1000).toFixed(1) + ' km' : m + ' m';
+      KapiMotoru.mesafeyiDegerlendir(m, 2);
     }
 
     function kilidiSifirla() {
       KapiMotoru.korumaKilidiniSifirla();
       balonGoster('🔓 Koruma kilidi sıfırlandı!');
+      arayuzuGuncelle(KapiMotoru.durumuYukle());
     }
 
     function kayitlariTemizle() {

@@ -1,7 +1,7 @@
 {
   "name": "site-kapisi-otomasyonu",
   "version": "1.0.0",
-  "description": "Site kapısına 10 metre yaklaşınca yalnızca Smart Life ID ile otomatik açan uygulama",
+  "description": "Site kapısına 2 metre yaklaşınca yalnızca Smart Life ID ile otomatik açan uygulama",
   "main": "sunucu.js",
   "scripts": {
     "baslat": "node sunucu.js",

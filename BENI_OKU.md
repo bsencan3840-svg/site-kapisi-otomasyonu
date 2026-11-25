@@ -1,6 +1,6 @@
 # 🚗 Site Kapısı
 
-Site kapısına **10 metre** yaklaşınca kapıyı otomatik açan uygulama.
+Site kapısına **2 metre** yaklaşınca kapıyı otomatik açan uygulama.
 
 ## 🌐 Canlı adres
 
@@ -25,10 +25,10 @@ Bağlantı bilgileri uygulamanın içinde tutulur; kullanıcıya gösterilmez ve
 2. **Tek Kurulum** alanına Smart Life ID'nizi yapıştırın ve **Kaydet**e basın.
 3. Bir kez, kapının önünde durup **"Site Kapısını Şimdi Aç"**a basın.
    Kapı konumu otomatik öğrenilir; sizden konum bilgisi istenmez.
-4. **"Otomatik Açıcıyı Başlat"**a basın. Artık kapıya 10 m kala otomatik açılır,
+4. **"Otomatik Açıcıyı Başlat"**a basın. Artık kapıya 2 m kala otomatik açılır,
    80 m uzaklaştığınızda sistem yeniden kurulur.
 
-Masaüstünde denemek için **Yaklaşma Testi** anahtarını açıp çubuğu 10 m'nin altına çekebilirsiniz.
+Masaüstünde denemek için **Yaklaşma Testi** anahtarını açıp çubuğu 2 m'nin altına çekebilirsiniz.
 
 ---
 

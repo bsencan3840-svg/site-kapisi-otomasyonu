@@ -16,7 +16,7 @@ const VARSAYILAN_AYARLAR = {
   // Dahili / otomatik öğrenilen değerler (kullanıcıya sorulmaz)
   kapiEnlem: null,
   kapiBoylam: null,
-  acilmaMesafesiMetre: 10,
+  acilmaMesafesiMetre: 2,
   sifirlamaMesafesiMetre: 80,
   beklemeSuresiSaniye: 45,
   otomatikAcmaAktif: true,
@@ -267,8 +267,9 @@ const KapiMotoru = {
     const mesafe = mesafeHesaplaMetre(enlem, boylam, ayar.kapiEnlem, ayar.kapiBoylam);
     if (mesafe === null) return;
 
-    // 10 m eşiğinde güvenilmez GPS ölçümü yanlış tetikleme yapmasın.
-    if (Number.isFinite(sapma) && sapma > 25) {
+    // 2 m eşiğinde güvenilmez GPS ölçümü yanlış tetikleme yapmasın.
+    const sapmaSiniri = Math.max(8, ayar.acilmaMesafesiMetre * 3);
+    if (Number.isFinite(sapma) && sapma > sapmaSiniri) {
       const durum = this.durumuYukle();
       durum.sonMesafeMetre = mesafe;
       durum.sonSapmaMetre = Math.round(sapma);
@@ -305,7 +306,7 @@ const KapiMotoru = {
           }
         );
         this.calisiyorMu = true;
-        this.kayitEkle('🚀 Arka plan 10m hassas takip başlatıldı.');
+        this.kayitEkle('🚀 Arka plan 2m hassas takip başlatıldı.');
         return { basarili: true, mesaj: 'Arka plan takibi aktif!' };
       } catch { this.kayitEkle('ℹ️ Standart GPS moduna geçiliyor...'); }
     }
@@ -325,7 +326,7 @@ const KapiMotoru = {
     );
     this.calisiyorMu = true;
     this.kayitEkle('🚀 Yüksek hassasiyetli konum takibi başlatıldı.');
-    return { basarili: true, mesaj: '10 metre hassas konum takibi başlatıldı!' };
+    return { basarili: true, mesaj: '2 metre hassas konum takibi başlatıldı!' };
   },
 
   async takibiDurdur() {
