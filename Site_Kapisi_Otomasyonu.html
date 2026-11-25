@@ -3,1002 +3,1434 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Site Kapısı Otomasyonu - Canlı Uygulama Gösterimi</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Site Kapısı" />
+  
+  <link rel="icon" href="ikon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="ikon.svg" />
+  <title>Site Kapısı</title>
   <style>
-    :root {
-      --arka-plan: #070d19;
-      --telefon-govde: #0f172a;
-      --kart-arka: #162238;
-      --kart-kenar: #283a57;
-      --yesil: #10b981;
-      --yesil-acik: #34d399;
-      --mavi: #2563eb;
-      --kirmizi: #ef4444;
-      --sari: #f59e0b;
-      --metin: #f8fafc;
-      --metin-soluk: #94a3b8;
-    }
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
+:root {
+  --bg: #070b1a;
+  --bg-2: #0d1630;
+  --panel: rgba(20, 31, 58, 0.72);
+  --panel-border: rgba(148, 163, 184, 0.16);
+  --text: #f2f6ff;
+  --muted: #93a5c4;
+  --mint: #34e5b0;
+  --mint-dark: #0f9f7a;
+  --cyan: #49b9ff;
+  --amber: #ffc857;
+  --danger: #ff6b7a;
+  --shadow: 0 18px 50px rgba(2, 6, 23, 0.45);
+}
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      background: radial-gradient(circle at top, #172554 0%, #070d19 65%);
-      color: var(--metin);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 20px 12px 40px;
-    }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-    /* Bilgisayarda açıldığında üst tanıtım başlığı */
-    .sunum-baslik {
-      text-align: center;
-      max-width: 520px;
-      margin-bottom: 18px;
-    }
+html { scroll-behavior: smooth; }
 
-    .sunum-etiket {
-      display: inline-block;
-      background: rgba(16, 185, 129, 0.15);
-      color: #6ee7b7;
-      border: 1px solid rgba(16, 185, 129, 0.4);
-      padding: 5px 14px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
+body {
+  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(1100px 620px at 15% -10%, rgba(52, 229, 176, 0.16), transparent 60%),
+    radial-gradient(900px 560px at 110% 8%, rgba(73, 185, 255, 0.18), transparent 58%),
+    linear-gradient(165deg, var(--bg) 0%, var(--bg-2) 55%, #090f24 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  padding-bottom: calc(108px + env(safe-area-inset-bottom, 0px));
+  overflow-x: hidden;
+}
 
-    .sunum-baslik h1 {
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: -0.3px;
-    }
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.28;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 38px 38px;
+  mask-image: linear-gradient(to bottom, black, transparent 70%);
+}
 
-    .sunum-baslik p {
-      font-size: 13.5px;
-      color: var(--metin-soluk);
-      margin-top: 6px;
-      line-height: 1.45;
-    }
+.app-shell { position: relative; max-width: 520px; margin: 0 auto; padding: 0 18px; }
 
-    /* Telefon Çerçevesi Görünümü */
-    .telefon-cerceve {
-      width: 100%;
-      max-width: 430px;
-      background: var(--telefon-govde);
-      border: 4px solid #334155;
-      border-radius: 34px;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255,255,255,0.06);
-      overflow: hidden;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-    }
+/* ---------- ÜST BAR ---------- */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 4px 14px;
+  background: linear-gradient(to bottom, rgba(7,11,26,0.94) 60%, rgba(7,11,26,0));
+  backdrop-filter: blur(14px);
+}
 
-    @media (max-width: 480px) {
-      body { padding: 0; background: var(--telefon-govde); }
-      .sunum-baslik { display: none; }
-      .telefon-cerceve {
-        max-width: 100%;
-        min-height: 100vh;
-        border: none;
-        border-radius: 0;
-        box-shadow: none;
-      }
-    }
+.brand { display: flex; align-items: center; gap: 12px; }
 
-    .ust-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 18px;
-      background: rgba(22, 34, 56, 0.95);
-      border-bottom: 1px solid var(--kart-kenar);
-    }
+.brand-mark {
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  font-size: 21px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(52,229,176,0.24), rgba(73,185,255,0.18));
+  border: 1px solid rgba(52,229,176,0.35);
+  box-shadow: 0 8px 22px rgba(52,229,176,0.16), inset 0 1px 0 rgba(255,255,255,0.12);
+}
 
-    .ust-bar h2 {
-      font-size: 16px;
-      font-weight: 700;
-    }
+.brand h1 { font-size: 18px; font-weight: 800; letter-spacing: -0.4px; }
+.brand p { font-size: 11px; color: var(--muted); margin-top: 2px; letter-spacing: 0.2px; }
 
-    .ust-bar span {
-      display: block;
-      font-size: 11.5px;
-      color: var(--metin-soluk);
-      margin-top: 2px;
-    }
+.status-pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 10px; font-weight: 800; letter-spacing: 0.7px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: #ffc2cb;
+  background: rgba(255,107,122,0.12);
+  border: 1px solid rgba(255,107,122,0.32);
+  white-space: nowrap;
+  transition: all .3s ease;
+}
+.status-pill::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--danger); box-shadow: 0 0 10px var(--danger); }
+.status-pill.is-active { color: #a7f3d0; background: rgba(52,229,176,0.12); border-color: rgba(52,229,176,0.36); }
+.status-pill.is-active::before { background: var(--mint); box-shadow: 0 0 12px var(--mint); animation: nabz 1.8s infinite; }
 
-    .durum-rozet {
-      font-size: 10.5px;
-      font-weight: 700;
-      padding: 5px 10px;
-      border-radius: 999px;
-      background: #064e3b;
-      color: #6ee7b7;
-      border: 1px solid #059669;
-      white-space: nowrap;
-    }
+/* ---------- SEKMELER ---------- */
+.sekme-icerik { display: none; animation: giris .35s ease; }
+.sekme-icerik.aktif { display: block; }
+@keyframes giris { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 
-    .icerik {
-      padding: 15px;
-      flex: 1;
-    }
+/* ---------- RADAR / HERO ---------- */
+.hero {
+  position: relative;
+  margin: 8px 0 18px;
+  padding: 26px 20px 22px;
+  border-radius: 30px;
+  text-align: center;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(52,229,176,0.14), transparent 55%),
+    linear-gradient(160deg, rgba(25,39,72,0.92), rgba(14,23,46,0.92));
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.06);
+  overflow: hidden;
+  transition: border-color .4s ease, box-shadow .4s ease, background .4s ease;
+}
+.hero::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(120deg, transparent 35%, rgba(255,255,255,0.04) 50%, transparent 65%);
+  transform: translateX(-100%);
+  animation: parla 7s ease-in-out infinite;
+}
+@keyframes parla { 0%, 70% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
-    .sekme { display: none; animation: gecis 0.2s ease; }
-    .sekme.aktif { display: block; }
+.hero.is-near {
+  border-color: rgba(52,229,176,0.6);
+  box-shadow: 0 0 0 1px rgba(52,229,176,0.18), 0 24px 60px rgba(52,229,176,0.2);
+  background: radial-gradient(circle at 50% 28%, rgba(52,229,176,0.3), transparent 58%), linear-gradient(160deg, #123a35, #0d2032);
+}
 
-    @keyframes gecis {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+.radar {
+  position: relative;
+  width: 212px; height: 212px;
+  margin: 4px auto 18px;
+  display: grid; place-items: center;
+}
+.radar-rings { position: absolute; inset: 0; display: grid; place-items: center; }
+.radar-rings span {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(52,229,176,0.22);
+  animation: nefes 4s ease-in-out infinite;
+}
+.radar-rings span:nth-child(1) { width: 100%; height: 100%; }
+.radar-rings span:nth-child(2) { width: 72%; height: 72%; animation-delay: .5s; }
+.radar-rings span:nth-child(3) { width: 44%; height: 44%; animation-delay: 1s; border-color: rgba(73,185,255,0.28); }
+@keyframes nefes { 0%,100% { transform: scale(.97); opacity: .55; } 50% { transform: scale(1.03); opacity: 1; } }
 
-    /* CANLI KAPI VE ARAÇ ANİMASYON SAHNESİ */
-    .sahne-karti {
-      background: linear-gradient(180deg, #0f1b31 0%, #162238 100%);
-      border: 2px solid var(--kart-kenar);
-      border-radius: 20px;
-      padding: 16px;
-      margin-bottom: 12px;
-      transition: all 0.35s ease;
-      position: relative;
-    }
+.radar-dot {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0deg, rgba(52,229,176,.28) 45deg, transparent 90deg, transparent 360deg);
+  mask-image: radial-gradient(circle, transparent 17%, #000 19%);
+  -webkit-mask-image: radial-gradient(circle, transparent 17%, #000 19%);
+  animation: tarama 4s linear infinite;
+}
+@keyframes tarama { to { transform: rotate(360deg); } }
+.radar-dot::after {
+  content: ''; position: absolute; top: 50%; left: 50%;
+  width: 8px; height: 8px; margin: -4px; border-radius: 50%;
+  background: var(--mint);
+  box-shadow: 0 0 18px var(--mint), 0 0 40px rgba(52,229,176,.5);
+  mask-image: none; -webkit-mask-image: none;
+}
 
-    .sahne-karti.acildi {
-      border-color: var(--yesil);
-      box-shadow: 0 0 28px rgba(16, 185, 129, 0.3);
-      background: linear-gradient(180deg, #064e3b 0%, #0d2724 100%);
-    }
+.radar-center { position: relative; z-index: 2; }
+.radar-label { display: block; font-size: 10px; font-weight: 800; letter-spacing: 1.6px; color: var(--muted); }
+.radar-value { font-size: 48px; font-weight: 800; line-height: 1.1; letter-spacing: -2px; margin: 4px 0; }
+.radar-unit { font-size: 11px; color: var(--mint); font-weight: 700; }
 
-    /* Görsel Sürgülü Site Kapısı */
-    .kapi-gorsel-alani {
-      background: #09101d;
-      border: 1px solid #24344f;
-      border-radius: 14px;
-      height: 118px;
-      position: relative;
-      overflow: hidden;
-      margin-bottom: 14px;
-    }
+.hero-status { font-size: 14px; font-weight: 600; color: #d8e4fb; line-height: 1.5; min-height: 42px; }
+.hero-meta { margin-top: 8px; font-size: 11px; color: var(--muted); }
 
-    .kapi-durum-isigi {
-      position: absolute;
-      top: 8px;
-      right: 10px;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 9px;
-      border-radius: 999px;
-      background: rgba(239, 68, 68, 0.2);
-      color: #fca5a5;
-      border: 1px solid rgba(239, 68, 68, 0.45);
-      z-index: 5;
-      transition: all 0.3s ease;
-    }
+.lock-note {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255,200,87,0.09);
+  border: 1px solid rgba(255,200,87,0.25);
+  color: #ffe3a6;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.lock-note p { margin-bottom: 8px; }
 
-    .kapi-durum-isigi.acik {
-      background: rgba(16, 185, 129, 0.25);
-      color: #6ee7b7;
-      border-color: #10b981;
-    }
+/* ---------- BUTONLAR ---------- */
+.btn {
+  width: 100%;
+  border: 0;
+  border-radius: 16px;
+  padding: 15px 18px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .25s ease, filter .2s ease;
+}
+.btn:active { transform: scale(.975); }
+.btn-primary {
+  background: linear-gradient(120deg, #2fd6a4, #1aa7c8);
+  box-shadow: 0 12px 28px rgba(47,214,164,0.25);
+}
+.btn-primary:hover { filter: brightness(1.08); }
+.btn-danger { background: linear-gradient(120deg, #ff6b7a, #f04462); box-shadow: 0 12px 28px rgba(255,107,122,.25); }
+.btn-ghost {
+  margin-top: 10px;
+  color: #dbeafe;
+  background: rgba(148,163,184,0.1);
+  border: 1px solid rgba(148,163,184,0.22);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+.btn-ghost:hover { background: rgba(148,163,184,0.16); }
+.btn-save {
+  margin-top: 14px;
+  background: linear-gradient(120deg, #49b9ff, #6366f1);
+  box-shadow: 0 10px 24px rgba(73,185,255,.22);
+}
 
-    .duvar-sol, .duvar-sag {
-      position: absolute;
-      top: 26px;
-      width: 24%;
-      height: 36px;
-      background: #334155;
-      border-top: 3px solid #475569;
-      z-index: 3;
-    }
-    .duvar-sol { left: 0; border-right: 4px solid #64748b; }
-    .duvar-sag { right: 0; border-left: 4px solid #64748b; }
+/* ---------- PANELLER ---------- */
+.panel {
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: 24px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
+}
+.panel-head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+.panel-icon {
+  flex: 0 0 auto;
+  width: 38px; height: 38px;
+  display: grid; place-items: center;
+  border-radius: 12px;
+  font-size: 18px;
+  background: rgba(73,185,255,.14);
+  border: 1px solid rgba(73,185,255,.24);
+}
+.panel h2 { font-size: 15px; font-weight: 800; letter-spacing: -.2px; }
+.panel p { font-size: 12px; color: var(--muted); line-height: 1.55; margin-top: 3px; }
 
-    /* Açılıp Kapanan Demir Site Kapısı Kanatları */
-    .kapi-kanat-sol, .kapi-kanat-sag {
-      position: absolute;
-      top: 30px;
-      width: 26%;
-      height: 30px;
-      background: repeating-linear-gradient(
-        90deg,
-        #1e293b,
-        #1e293b 6px,
-        #64748b 6px,
-        #64748b 9px
-      );
-      border: 2px solid #94a3b8;
-      z-index: 2;
-      transition: transform 0.85s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s;
-    }
-    .kapi-kanat-sol { left: 24%; }
-    .kapi-kanat-sag { right: 24%; }
+.field-label { display: block; font-size: 11px; font-weight: 800; letter-spacing: .8px; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; }
+.input-wrap {
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 14px;
+  border-radius: 14px;
+  background: rgba(7,11,26,.55);
+  border: 1px solid rgba(148,163,184,.2);
+  transition: border-color .2s, box-shadow .2s;
+}
+.input-wrap:focus-within { border-color: rgba(52,229,176,.65); box-shadow: 0 0 0 3px rgba(52,229,176,.12); }
+.input-wrap span { font-size: 15px; opacity: .8; }
+.input-wrap input {
+  width: 100%;
+  padding: 14px 0;
+  border: 0; outline: 0;
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: .3px;
+}
+.input-wrap input::placeholder { color: #617396; font-weight: 500; }
 
-    .kapi-kanat-sol.acik {
-      transform: translateX(-92%);
-      border-color: #34d399;
-    }
-    .kapi-kanat-sag.acik {
-      transform: translateX(92%);
-      border-color: #34d399;
-    }
+.switches { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 6px; }
+.switch-label { font-size: 13px; font-weight: 700; }
+.switch {
+  appearance: none; width: 48px; height: 28px; border-radius: 999px;
+  background: rgba(148,163,184,.24); position: relative; cursor: pointer;
+  transition: background .25s; flex: 0 0 auto;
+}
+.switch::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #e2e8f0; transition: transform .25s;
+}
+.switch:checked { background: linear-gradient(120deg, var(--mint-dark), var(--mint)); }
+.switch:checked::after { transform: translateX(20px); background: #fff; }
 
-    /* Yol ve Yaklaşan Araç */
-    .yol {
-      position: absolute;
-      bottom: 0;
-      left: 34%;
-      width: 32%;
-      height: 62px;
-      background: #1e293b;
-      border-left: 2px dashed #475569;
-      border-right: 2px dashed #475569;
-    }
+.slider {
+  width: 100%; margin-top: 16px;
+  appearance: none; height: 8px; border-radius: 999px; outline: none;
+  background: linear-gradient(90deg, var(--mint), var(--cyan), rgba(148,163,184,.25));
+}
+.slider::-webkit-slider-thumb {
+  appearance: none; width: 24px; height: 24px; border-radius: 50%;
+  background: #fff; border: 4px solid var(--mint-dark); cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,.35);
+}
+.slider::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: #fff; border: 4px solid var(--mint-dark); cursor: pointer; }
+.scale { display: flex; justify-content: space-between; margin-top: 10px; font-size: 10px; color: var(--muted); font-weight: 700; }
+.sim-area { margin-top: 6px; }
 
-    .arac-ikonu {
-      position: absolute;
-      left: 50%;
-      bottom: 4px;
-      transform: translateX(-50%);
-      font-size: 24px;
-      z-index: 4;
-      transition: bottom 0.25s linear;
-      filter: drop-shadow(0 3px 6px rgba(0,0,0,0.6));
-    }
+/* ---------- GEÇMİŞ ---------- */
+.timeline { margin-top: 6px; position: relative; padding-left: 18px; }
+.timeline::before { content: ''; position: absolute; left: 5px; top: 6px; bottom: 6px; width: 1px; background: rgba(148,163,184,.22); }
+.timeline-item { position: relative; padding: 9px 0; font-size: 12px; line-height: 1.5; color: #d5e1f7; }
+.timeline-item .dot { position: absolute; left: -17px; top: 15px; width: 9px; height: 9px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 10px rgba(52,229,176,.5); }
+.empty-note { text-align: center; padding: 22px 8px; color: var(--muted); font-size: 12px; }
+.clear-btn {
+  border: 1px solid rgba(255,107,122,.3);
+  background: rgba(255,107,122,.12);
+  color: #ffc2cb;
+  border-radius: 10px; padding: 7px 11px;
+  font-family: inherit; font-size: 11px; font-weight: 800; cursor: pointer;
+}
 
-    .on-metre-cizgisi {
-      position: absolute;
-      bottom: 36px;
-      left: 20%;
-      right: 20%;
-      border-top: 1.5px dashed rgba(16, 185, 129, 0.65);
-      text-align: left;
-      z-index: 1;
-    }
+/* ---------- ALT MENÜ ---------- */
+.bottom-nav {
+  position: fixed;
+  left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  width: min(484px, calc(100% - 32px));
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+  padding: 6px;
+  border-radius: 20px;
+  background: rgba(13,22,48,.86);
+  border: 1px solid rgba(148,163,184,.18);
+  box-shadow: 0 18px 40px rgba(0,0,0,.45);
+  backdrop-filter: blur(18px);
+  z-index: 40;
+}
+.nav-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 8px; border: 0; border-radius: 14px;
+  background: transparent; color: var(--muted);
+  font-family: inherit; font-size: 12px; font-weight: 800; cursor: pointer;
+  transition: all .25s ease;
+}
+.nav-btn .ikon { font-size: 16px; }
+.nav-btn.aktif { color: #071a16; background: linear-gradient(120deg, var(--mint), #6ee7c7); box-shadow: 0 8px 18px rgba(52,229,176,.25); }
 
-    .on-metre-cizgisi span {
-      font-size: 9.5px;
-      color: #6ee7b7;
-      background: rgba(9, 16, 29, 0.85);
-      padding: 1px 5px;
-      border-radius: 4px;
-      position: relative;
-      top: -9px;
-    }
+/* ---------- TOAST ---------- */
+.toast {
+  position: fixed;
+  left: 50%; top: 84px;
+  transform: translate(-50%, -12px);
+  max-width: min(440px, calc(100% - 36px));
+  padding: 12px 18px;
+  border-radius: 14px;
+  font-size: 12px; font-weight: 700; text-align: center;
+  color: #fff;
+  background: linear-gradient(120deg, #0f9f7a, #0e7490);
+  box-shadow: 0 16px 36px rgba(0,0,0,.4);
+  opacity: 0; pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease;
+  z-index: 60;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.toast.hata { background: linear-gradient(120deg, #f04462, #b91c1c); }
+.toast.bilgi { background: linear-gradient(120deg, #2563eb, #4338ca); }
 
-    /* Mesafe Göstergesi */
-    .mesafe-satiri {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
+@keyframes nabz { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
 
-    .mesafe-kutu {
-      text-align: left;
-    }
+@media (max-width: 360px) {
+  .radar { width: 180px; height: 180px; }
+  .radar-value { font-size: 40px; }
+  .brand p { display: none; }
+}
 
-    .mesafe-etiket {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--metin-soluk);
-      letter-spacing: 0.6px;
-    }
-
-    .mesafe-buyuk {
-      font-size: 36px;
-      font-weight: 800;
-      line-height: 1.05;
-    }
-
-    .sahne-karti.acildi .mesafe-buyuk {
-      color: #6ee7b7;
-    }
-
-    .hedef-bilgi-kutu {
-      text-align: right;
-      font-size: 11.5px;
-      color: var(--metin-soluk);
-      line-height: 1.5;
-    }
-
-    .durum-cumlesi {
-      font-size: 13px;
-      font-weight: 600;
-      color: #e2e8f0;
-      padding-top: 8px;
-      border-top: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .kilit-uyari {
-      margin-top: 10px;
-      padding: 10px;
-      border-radius: 10px;
-      background: rgba(245, 158, 11, 0.14);
-      border: 1px solid rgba(245, 158, 11, 0.45);
-      font-size: 11.5px;
-      color: #fde68a;
-      display: none;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    /* Butonlar */
-    .buton {
-      width: 100%;
-      border: none;
-      border-radius: 13px;
-      padding: 13px 14px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: transform 0.1s ease, filter 0.2s;
-      margin-bottom: 9px;
-    }
-
-    .buton:active { transform: scale(0.98); }
-    .buton-demo {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      color: #fff;
-      box-shadow: 0 6px 18px rgba(16, 185, 129, 0.32);
-    }
-    .buton-mavi { background: var(--mavi); color: #fff; }
-    .buton-koyu { background: #24344f; color: #e2e8f0; font-size: 13px; padding: 11px; }
-    .buton-sari-ufak {
-      background: #d97706;
-      color: #fff;
-      border: none;
-      border-radius: 7px;
-      padding: 6px 10px;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    /* Kartlar */
-    .kart {
-      background: var(--kart-arka);
-      border: 1px solid var(--kart-kenar);
-      border-radius: 16px;
-      padding: 14px;
-      margin-bottom: 12px;
-    }
-
-    .kart-baslik {
-      font-size: 14.5px;
-      font-weight: 700;
-      margin-bottom: 5px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .kart-aciklama {
-      font-size: 12px;
-      color: var(--metin-soluk);
-      line-height: 1.45;
-      margin-bottom: 10px;
-    }
-
-    .kaydirici {
-      width: 100%;
-      accent-color: var(--yesil);
-      margin: 8px 0 4px;
-      cursor: pointer;
-    }
-
-    .kaydirici-alt {
-      display: flex;
-      justify-content: space-between;
-      font-size: 11px;
-      color: var(--metin-soluk);
-    }
-
-    .iki-sutun {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .etiket {
-      display: block;
-      font-size: 11.5px;
-      font-weight: 600;
-      color: #cbd5e1;
-      margin-top: 8px;
-      margin-bottom: 4px;
-    }
-
-    .girdi {
-      width: 100%;
-      background: #09101d;
-      border: 1px solid var(--kart-kenar);
-      border-radius: 9px;
-      padding: 9px 10px;
-      color: var(--metin);
-      font-size: 13px;
-      outline: none;
-    }
-
-    .girdi:focus { border-color: #3b82f6; }
-
-    .secenekler {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 6px;
-    }
-
-    .secenek {
-      flex: 1;
-      background: #09101d;
-      border: 1px solid var(--kart-kenar);
-      color: var(--metin-soluk);
-      padding: 8px 4px;
-      border-radius: 8px;
-      font-size: 11.5px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .secenek.aktif {
-      background: #1d4ed8;
-      border-color: #60a5fa;
-      color: #fff;
-    }
-
-    .kayit-satir {
-      padding: 8px 0;
-      border-bottom: 1px solid var(--kart-kenar);
-      font-size: 12px;
-      color: #cbd5e1;
-      font-family: Consolas, monospace;
-      line-height: 1.4;
-    }
-
-    /* Alt Menü */
-    .alt-menu {
-      display: flex;
-      background: #111b2e;
-      border-top: 1px solid var(--kart-kenar);
-      padding: 7px 8px;
-    }
-
-    .menu-dugme {
-      flex: 1;
-      background: none;
-      border: none;
-      color: var(--metin-soluk);
-      font-size: 11px;
-      font-weight: 600;
-      padding: 6px 4px;
-      border-radius: 10px;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-    }
-
-    .menu-dugme.aktif {
-      color: #60a5fa;
-      background: rgba(37, 99, 235, 0.15);
-    }
-
-    .bildirim {
-      position: fixed;
-      top: 18px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #065f46;
-      color: #fff;
-      padding: 11px 18px;
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 700;
-      box-shadow: 0 12px 28px rgba(0,0,0,0.55);
-      z-index: 200;
-      display: none;
-      text-align: center;
-      max-width: 92%;
-    }
-  </style>
+</style>
 </head>
 <body>
-  <div id="bildirimKutusu" class="bildirim"></div>
+  <div id="bildirimBalonu" class="toast"></div>
 
-  <!-- Bilgisayar Ekranında Açıldığında Üst Açıklama -->
-  <div class="sunum-baslik">
-    <span class="sunum-etiket">📱 iOS & Android Akıllı Kapı Projesi</span>
-    <h1>Site Kapısı 10m Otomatik Açıcı</h1>
-    <p>
-      Telefon cebinizdeyken site kapısına <strong>10 metre</strong> yaklaştığınız anda arka planda <strong>Smart Life</strong> üzerinden kapıyı otomatik açan mobil uygulama. Aşağıdaki yeşil düğmeye basarak çalışmasını canlı izleyebilirsiniz!
-    </p>
-  </div>
-
-  <!-- Mobil Uygulama Gövdesi -->
-  <div class="telefon-cerceve">
-    <header class="ust-bar">
-      <div>
-        <h2>🚗 Site Kapısı Otomasyonu</h2>
-        <span id="ustAltYazi">Smart Life • 10m Otomatik Tetikleyici</span>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">🚗</div>
+        <div>
+          <h1>Site Kapısı</h1>
+          <p>Smart Life • 10 m Otomatik Açıcı</p>
+        </div>
       </div>
-      <div id="aktifRozet" class="durum-rozet">● SİSTEM HAZIR</div>
+      <div id="servisEtiketi" class="status-pill">DURDURULDU</div>
     </header>
 
-    <div class="icerik">
-      <!-- 1. SEKME: CANLI RADAR VE DEMO -->
-      <div id="sekme-radar" class="sekme aktif">
-        <div id="sahneKarti" class="sahne-karti">
-          <!-- Canlı Site Kapısı Görseli -->
-          <div class="kapi-gorsel-alani">
-            <div id="kapiIsigi" class="kapi-durum-isigi">● KAPI KAPALI</div>
-            <div class="duvar-sol"></div>
-            <div id="kanatSol" class="kapi-kanat-sol"></div>
-            <div id="kanatSag" class="kapi-kanat-sag"></div>
-            <div class="duvar-sag"></div>
-            <div class="on-metre-cizgisi"><span>⚡ 10m Otomatik Açılma Sınırı</span></div>
-            <div class="yol"></div>
-            <div id="aracIkonu" class="arac-ikonu">🚘</div>
-          </div>
-
-          <div class="mesafe-satiri">
-            <div class="mesafe-kutu">
-              <div class="mesafe-etiket">SİTE KAPISINA MESAFE</div>
-              <div id="mesafeYazi" class="mesafe-buyuk">85.0 m</div>
-            </div>
-            <div class="hedef-bilgi-kutu">
-              <div>Açılma Sınırı: <strong>≤ <span id="hedefYazi">10</span>m</strong></div>
-              <div>Yeniden Kurulma: <strong>≥ <span id="sifirYazi">80</span>m</strong></div>
+    <main>
+      <!-- ANA EKRAN -->
+      <section id="sekme-ana" class="sekme-icerik aktif">
+        <div id="radarKarti" class="hero">
+          <div class="radar">
+            <div class="radar-rings"><span></span><span></span><span></span></div>
+            <div class="radar-dot"></div>
+            <div class="radar-center">
+              <span class="radar-label">KAPIYA MESAFE</span>
+              <div id="mesafeDegeri" class="radar-value">--</div>
+              <span id="mesafeBirimi" class="radar-unit">METRE</span>
             </div>
           </div>
+          <div id="durumAciklama" class="hero-status">Smart Life ID'nizi girin.</div>
+          <div id="hassasiyetBilgi" class="hero-meta">Açılma Sınırı: ≤ 10 metre</div>
 
-          <div id="durumCumlesi" class="durum-cumlesi">
-            Kapıya yaklaşıldığında (10m) otomatik açılmaya hazır.
-          </div>
-
-          <div id="kilitUyari" class="kilit-uyari">
-            <span>🔒 Kapı açıldı! İçeride dururken tekrar açılmaması için kilitlendi (80m uzaklaşınca sıfırlanır).</span>
-            <button class="buton-sari-ufak" onclick="kilidiSifirla()">Sıfırla</button>
+          <div id="kilitKutusu" class="lock-note" style="display: none;">
+            <p id="kilitAciklama">Kapı açıldı. 80 metre uzaklaştığınızda otomatik yeniden kurulur.</p>
+            <button class="clear-btn" onclick="kilidiSifirla()">Kilidi Şimdi Sıfırla 🔓</button>
           </div>
         </div>
 
-        <!-- TEK TIKLA CANLI YAKLAŞMA DEMOSU -->
-        <button id="demoButonu" class="buton buton-demo" onclick="otomatikSurusBaslat()">
-          ▶️ Arabayla Kapıya Yaklaşmayı Canlandır (Demo)
+        <button id="takipButonu" class="btn btn-primary" onclick="takibiDegistir()">
+          🚀 Otomatik Açıcıyı Başlat
+        </button>
+        <button class="btn btn-ghost" onclick="kapiyiElleAc()">
+          🔓 Site Kapısını Şimdi Aç
         </button>
 
-        <!-- ELLE MESAFE KAYDIRICI -->
-        <div class="kart">
-          <div class="kart-baslik">
-            <span>🎚️ Mesafeyi Elle Test Et</span>
-            <span style="font-size:12px; color:#6ee7b7;" id="kaydiriciDeger">85m</span>
-          </div>
-          <p class="kart-aciklama">
-            Çubuğu sola çekerek kapıya <strong>10 metre</strong> yaklaşın; kapının açıldığını göreceksiniz. Ardından <strong>80 metre</strong> sağa çekerek kilidin otomatik sıfırlanmasını deneyin.
-          </p>
-          <input
-            type="range"
-            id="mesafeCubugu"
-            class="kaydirici"
-            min="0"
-            max="110"
-            value="85"
-            oninput="elleMesafeDegistir(this.value)"
-          />
-          <div class="kaydirici-alt">
-            <span>🎯 0m (Kapı)</span>
-            <span>⚡ 10m (Açılır)</span>
-            <span>🔄 80m+ (Yenilenir)</span>
-          </div>
-        </div>
-
-        <!-- GERÇEK GPS VE KONUM KAYDETME -->
-        <div class="kart">
-          <div class="kart-baslik">📍 Gerçek Konum (GPS) Ayarları</div>
-          <p class="kart-aciklama">
-            Telefonda gerçek konum takibini başlatabilir veya kapının önünde dururken konumu kaydedebilirsiniz.
-          </p>
-
-          <div class="iki-sutun" style="margin-bottom: 8px;">
-            <button class="buton buton-mavi" style="margin-bottom:0; font-size:12.5px;" onclick="gercekGpsBaslat()">
-              📡 Gerçek GPS Başlat
-            </button>
-            <button class="buton buton-koyu" style="margin-bottom:0; font-size:12.5px;" onclick="konumuKapiYap()">
-              📍 Kapı Noktasını Kaydet
-            </button>
-          </div>
-
-          <div class="iki-sutun">
-            <div>
-              <label class="etiket">Açılma Mesafesi (m)</label>
-              <input type="number" id="girdiAcilma" class="girdi" value="10" onchange="ayarlariKaydet()" />
-            </div>
-            <div>
-              <label class="etiket">Tekrar Kurulma (m)</label>
-              <input type="number" id="girdiSifirlama" class="girdi" value="80" onchange="ayarlariKaydet()" />
+        <!-- TEK KURULUM ALANI -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-icon">🔑</div>
+            <div style="flex: 1;">
+              <h2>Tek Kurulum</h2>
+              <p>Smart Life ID'nizi girin. Başka bir şey girmenize gerek yok; kapı konumunu ve ayarları uygulama kendiliğinden halleder.</p>
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- 2. SEKME: SMART LIFE BAĞLANTI AYARLARI -->
-      <div id="sekme-baglanti" class="sekme">
-        <div class="kart">
-          <div class="kart-baslik">🔑 Smart Life Bağlantı Girişi</div>
-          <p class="kart-aciklama">
-            Uygulamayı kullanan site sakinleri kendi <strong>Smart Life (Tuya)</strong> veya özel bağlantı bilgilerini doğrudan bu ekrandan girerler. Hücresel veriden (4.5G/5G) ve Wi-Fi üzerinden çalışır.
-          </p>
-
-          <label class="etiket">Tetikleme Yöntemi</label>
-          <div class="secenekler">
-            <button id="sec-cihaz" class="secenek aktif" onclick="yontemSec('cihaz')">Smart Life Cihaz</button>
-            <button id="sec-senaryo" class="secenek" onclick="yontemSec('senaryo')">Senaryo</button>
-            <button id="sec-ozel" class="secenek" onclick="yontemSec('ozel')">Özel Bağlantı</button>
+          <label class="field-label" for="girdiSmartLifeId">Smart Life ID</label>
+          <div class="input-wrap">
+            <span>🆔</span>
+            <input
+              type="text"
+              id="girdiSmartLifeId"
+              placeholder="Smart Life ID'nizi yapıştırın"
+              autocomplete="off"
+              autocapitalize="off"
+              spellcheck="false"
+              onchange="smartLifeIdKaydet()"
+            />
           </div>
+          <button class="btn btn-save" onclick="smartLifeIdKaydet()">💾 ID'yi Kaydet</button>
+          <button class="btn btn-ghost" onclick="konumuSifirla()">📍 Kapı Konumunu Yeniden Öğren</button>
+        </div>
 
-          <div id="kutuTuya">
-            <label class="etiket">Erişim Numarası (Client ID)</label>
-            <input type="text" id="girdiClientId" class="girdi" placeholder="Örn: 8nhxyz1234567890" />
-
-            <label class="etiket">Gizli Anahtar (Client Secret)</label>
-            <input type="password" id="girdiSecret" class="girdi" placeholder="Gizli anahtarınızı girin" />
-
-            <div id="kutuCihazNo">
-              <label class="etiket">Kapı Cihaz Numarası (Smart Life Sanal ID)</label>
-              <input type="text" id="girdiDeviceId" class="girdi" placeholder="Smart Life > Cihaz Bilgileri > Sanal ID" />
-
-              <div class="iki-sutun">
-                <div>
-                  <label class="etiket">Komut Kodu</label>
-                  <input type="text" id="girdiKomut" class="girdi" value="switch_1" />
-                </div>
-                <div>
-                  <label class="etiket">Değer</label>
-                  <input type="text" id="girdiDeger" class="girdi" value="true" />
-                </div>
-              </div>
+        <!-- TEST SİMÜLATÖRÜ -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-icon">🚘</div>
+            <div style="flex: 1;">
+              <h2>Yaklaşma Testi</h2>
+              <p>Dışarı çıkmadan denemek için test modunu açın ve çubuğu 10 metrenin altına çekin.</p>
             </div>
           </div>
-
-          <div id="kutuOzel" style="display:none;">
-            <label class="etiket">Özel Bağlantı Adresi (Webhook URL)</label>
-            <input type="url" id="girdiWebhook" class="girdi" placeholder="https://..." />
+          <div class="switches">
+            <span class="switch-label">Test modu</span>
+            <input type="checkbox" id="simulatorAnahtari" class="switch" onchange="simulatorDegistir(this.checked)" />
           </div>
-
-          <button class="buton buton-demo" style="margin-top: 14px;" onclick="ayarlariKaydet(true)">
-            💾 Bilgileri Hafızaya Kaydet
-          </button>
-
-          <button class="buton buton-mavi" style="margin-bottom:0;" onclick="kapidanTestGonder()">
-            🔓 Kapıyı Şimdi Aç (Test Gönder)
-          </button>
-        </div>
-      </div>
-
-      <!-- 3. SEKME: GEÇMİŞ KAYITLAR -->
-      <div id="sekme-gecmis" class="sekme">
-        <div class="kart">
-          <div class="kart-baslik">
-            <span>📋 Otomatik Açılma Kayıtları</span>
-            <button class="buton-sari-ufak" style="background:#dc2626;" onclick="kayitlariSil()">Temizle</button>
+          <div id="simulatorAlani" class="sim-area" style="display: none;">
+            <input
+              type="range"
+              id="simulatorCubugu"
+              class="slider"
+              min="0"
+              max="120"
+              value="95"
+              oninput="simulatorMesafeGuncelle(this.value)"
+            />
+            <div class="scale">
+              <span>0m (Kapı)</span>
+              <span>10m (Açılır)</span>
+              <span>80m+ (Sıfırlanır)</span>
+            </div>
           </div>
-          <p class="kart-aciklama">Kapıya kaç metrede yaklaşıldığı ve gönderilen komutların saatli listesi:</p>
-          <div id="kayitAlani"></div>
         </div>
-      </div>
-    </div>
+      </section>
 
-    <!-- ALT GEZİNME ÇUBUĞU -->
-    <nav class="alt-menu">
-      <button id="menu-radar" class="menu-dugme aktif" onclick="sekmeDegistir('radar')">
-        <span style="font-size:18px;">📡</span>
-        <span>Canlı Radar</span>
+      <!-- GEÇMİŞ -->
+      <section id="sekme-gecmis" class="sekme-icerik">
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-icon">📋</div>
+            <div style="flex: 1;">
+              <h2>Açılma Geçmişi</h2>
+              <p>Son işlemler yalnızca bu cihazda saklanır.</p>
+            </div>
+            <button class="clear-btn" onclick="kayitlariTemizle()">Temizle</button>
+          </div>
+          <div id="kayitListesi"></div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button id="menu-ana" class="nav-btn aktif" onclick="sekmeAc('ana')">
+        <span class="ikon">📡</span>
+        <span>Ana Ekran</span>
       </button>
-      <button id="menu-baglanti" class="menu-dugme" onclick="sekmeDegistir('baglanti')">
-        <span style="font-size:18px;">🔑</span>
-        <span>Smart Life Ayarı</span>
-      </button>
-      <button id="menu-gecmis" class="menu-dugme" onclick="sekmeDegistir('gecmis')">
-        <span style="font-size:18px;">📋</span>
-        <span>Kayıtlar (<span id="kayitSayisi">0</span>)</span>
+      <button id="menu-gecmis" class="nav-btn" onclick="sekmeAc('gecmis')">
+        <span class="ikon">📋</span>
+        <span>Geçmiş (<span id="kayitSayaci">0</span>)</span>
       </button>
     </nav>
   </div>
 
   <script>
-    let korumaKilidi = false;
-    let kapiAcikGorunum = false;
-    let surusZamanlayici = null;
-    let gpsIzleyici = null;
-    let kapiEnlem = 41.0082;
-    let kapiBoylam = 28.9784;
-    let kayitListesi = [];
+/**
+ * SİTE BAĞLANTI PROFİLİ (kullanıcıya asla gösterilmez, asla sorulmaz)
+ * ------------------------------------------------------------------
+ * Telefondaki kullanıcı yalnızca TEK bir alana "Smart Life ID" yaznar.
+ * Bulut bağlantısı için gereken teknik bilgiler burada, uygulamanın
+ * içinde tutulur; arayüzde bunlara dair hiçbir alan, buton veya uyarı yoktur.
+ *
+ * Bu dosyayı yalnızca site yöneticisi bir kez doldurur. Kullanıcıların
+ * yapması gereken tek şey aşağıdaki gibi tek bir ID girmektir:
+ *   - cihazın Smart Life "Sanal ID"si  veya
+ *   - yöneticinin verdiği "SL1...." tek-ID kurulum kodu
+ *
+ * İki yöntem de aynı tek input alanına yazılır; uygulama otomatik ayırt eder.
+ */
 
-    function sesCal(frekans = 880, sure = 0.2) {
-      try {
-        const Ctx = window.AudioContext || window.webkitAudioContext;
-        if (!Ctx) return;
-        const ctx = new Ctx();
+const SITE_PROFILI = {
+  // Varsayılan bölge.
+  bolge: 'eu',
+
+  // Dahili bağlantı bilgileri (kullanıcıya asla sorulmaz / gösterilmez).
+  clientId: '',
+  secret: '',
+
+  // Kapı rölesinin varsayılan komutu (kullanıcıya sorulmaz).
+  komutKodu: 'switch_1',
+  komutDegeri: true,
+};
+
+if (typeof window !== 'undefined') window.SITE_PROFILI = SITE_PROFILI;
+if (typeof module !== 'undefined' && module.exports) module.exports = SITE_PROFILI;
+
+</script>
+  <script>
+/**
+ * TEK-ID SMART LIFE BAĞLANTISI
+ * ----------------------------
+ * Kullanıcıdan yalnızca "Smart Life ID" istenir. Bağlantıyla ilgili
+ * hiçbir teknik bilgi arayüzde yer almaz; kullanıcıya erişim anahtarı
+ * gibi kavramlar hiç gösterilmez. Hepsi dahili olarak çözülür.
+ *
+ * Harici paket yoktur: SHA-256 ve HMAC-SHA256 saf JavaScript ile
+ * uygulanmıştır (file:// ve mobil WebView'de de çalışır).
+ */
+
+/* ------------------------------------------------------------------ */
+/* Saf JavaScript SHA-256 / HMAC-SHA256                                */
+/* ------------------------------------------------------------------ */
+
+const SHA256_K = new Uint32Array([
+  0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+  0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+  0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+  0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+  0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+  0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+  0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+  0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2,
+]);
+
+function metneBayt(metin) {
+  if (typeof TextEncoder !== 'undefined') return new TextEncoder().encode(String(metin));
+  const sonuc = [];
+  const kodlu = unescape(encodeURIComponent(String(metin)));
+  for (let i = 0; i < kodlu.length; i++) sonuc.push(kodlu.charCodeAt(i));
+  return new Uint8Array(sonuc);
+}
+
+function sagaDondur(x, n) {
+  return (x >>> n) | (x << (32 - n));
+}
+
+function sha256Bayt(baytlar) {
+  const h = new Uint32Array([
+    0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
+    0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19,
+  ]);
+
+  const uzunluk = baytlar.length;
+  // 0x80 + (0..63) padding + 8 bayt bit uzunluğu
+  const toplam = Math.ceil((uzunluk + 9) / 64) * 64;
+  const dolu = new Uint8Array(toplam);
+  dolu.set(baytlar);
+  dolu[uzunluk] = 0x80;
+
+  const gorunum = new DataView(dolu.buffer);
+  gorunum.setUint32(toplam - 8, Math.floor(uzunluk / 0x20000000));
+  gorunum.setUint32(toplam - 4, (uzunluk << 3) >>> 0);
+
+  const w = new Uint32Array(64);
+  for (let i = 0; i < toplam; i += 64) {
+    for (let j = 0; j < 16; j++) w[j] = gorunum.getUint32(i + j * 4);
+    for (let j = 16; j < 64; j++) {
+      const x = w[j - 15];
+      const y = w[j - 2];
+      const s0 = sagaDondur(x, 7) ^ sagaDondur(x, 18) ^ (x >>> 3);
+      const s1 = sagaDondur(y, 17) ^ sagaDondur(y, 19) ^ (y >>> 10);
+      w[j] = (w[j - 16] + s0 + w[j - 7] + s1) >>> 0;
+    }
+
+    let a = h[0], b = h[1], c = h[2], d = h[3];
+    let e = h[4], f = h[5], g = h[6], hh = h[7];
+
+    for (let j = 0; j < 64; j++) {
+      const S1 = sagaDondur(e, 6) ^ sagaDondur(e, 11) ^ sagaDondur(e, 25);
+      const ch = (e & f) ^ (~e & g);
+      const t1 = (hh + S1 + ch + SHA256_K[j] + w[j]) >>> 0;
+      const S0 = sagaDondur(a, 2) ^ sagaDondur(a, 13) ^ sagaDondur(a, 22);
+      const maj = (a & b) ^ (a & c) ^ (b & c);
+      const t2 = (S0 + maj) >>> 0;
+      hh = g; g = f; f = e; e = (d + t1) >>> 0;
+      d = c; c = b; b = a; a = (t1 + t2) >>> 0;
+    }
+
+    h[0] = (h[0] + a) >>> 0; h[1] = (h[1] + b) >>> 0;
+    h[2] = (h[2] + c) >>> 0; h[3] = (h[3] + d) >>> 0;
+    h[4] = (h[4] + e) >>> 0; h[5] = (h[5] + f) >>> 0;
+    h[6] = (h[6] + g) >>> 0; h[7] = (h[7] + hh) >>> 0;
+  }
+
+  const cikti = new Uint8Array(32);
+  for (let i = 0; i < 8; i++) {
+    cikti[i * 4] = (h[i] >>> 24) & 0xff;
+    cikti[i * 4 + 1] = (h[i] >>> 16) & 0xff;
+    cikti[i * 4 + 2] = (h[i] >>> 8) & 0xff;
+    cikti[i * 4 + 3] = h[i] & 0xff;
+  }
+  return cikti;
+}
+
+function onaltiligaCevir(baytlar) {
+  let metin = '';
+  for (let i = 0; i < baytlar.length; i++) metin += baytlar[i].toString(16).padStart(2, '0');
+  return metin;
+}
+
+function sha256Ozet(metin) {
+  return onaltiligaCevir(sha256Bayt(metneBayt(metin)));
+}
+
+function hmacSha256Ozet(mesaj, anahtar) {
+  let anahtarBayt = metneBayt(anahtar);
+  if (anahtarBayt.length > 64) anahtarBayt = sha256Bayt(anahtarBayt);
+
+  const pad = new Uint8Array(64);
+  pad.set(anahtarBayt);
+
+  const mesajBayt = metneBayt(mesaj);
+  const ic = new Uint8Array(64 + mesajBayt.length);
+  const dis = new Uint8Array(64 + 32);
+  for (let i = 0; i < 64; i++) {
+    ic[i] = pad[i] ^ 0x36;
+    dis[i] = pad[i] ^ 0x5c;
+  }
+  ic.set(mesajBayt, 64);
+  dis.set(sha256Bayt(ic), 64);
+  return onaltiligaCevir(sha256Bayt(dis)).toUpperCase();
+}
+
+function imzaOlustur({ clientId, secret, accessToken = '', timestamp, method, pathWithQuery, bodyStr = '' }) {
+  const ozet = sha256Ozet(bodyStr);
+  const imzalanacak = [method, ozet, '', pathWithQuery].join('\n');
+  return hmacSha256Ozet(clientId + accessToken + timestamp + imzalanacak, secret);
+}
+
+/* ------------------------------------------------------------------ */
+/* TEK ID çözümü                                                       */
+/* ------------------------------------------------------------------ */
+
+function base64urlKodla(metin) {
+  const baytlar = metneBayt(metin);
+  if (typeof Buffer !== 'undefined') return Buffer.from(baytlar).toString('base64url');
+  let ikili = '';
+  baytlar.forEach((b) => { ikili += String.fromCharCode(b); });
+  return btoa(ikili).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+}
+
+function base64urlCoz(kod) {
+  const duzeltilen = kod.replace(/-/g, '+').replace(/_/g, '/');
+  const dolgu = duzeltilen.length % 4 ? '='.repeat(4 - (duzeltilen.length % 4)) : '';
+  if (typeof Buffer !== 'undefined') return Buffer.from(duzeltilen + dolgu, 'base64').toString('utf8');
+  const ikili = atob(duzeltilen + dolgu);
+  return new TextDecoder().decode(Uint8Array.from(ikili, (c) => c.charCodeAt(0)));
+}
+
+/** Yönetici tarafından üretilen, HER ŞEYİ içeren tek-ID kurulum kodu. */
+function smartLifeKodUret({ clientId, secret, deviceId, bolge = 'eu', komutKodu = 'switch_1', komutDegeri = true }) {
+  return 'SL1.' + base64urlKodla(JSON.stringify({
+    c: clientId, s: secret, d: deviceId, r: bolge, k: komutKodu, v: komutDegeri,
+  }));
+}
+
+function degeriTipineCevir(deger) {
+  if (typeof deger === 'boolean' || typeof deger === 'number') return deger;
+  const temiz = String(deger ?? 'true').trim();
+  if (temiz.toLowerCase() === 'true') return true;
+  if (temiz.toLowerCase() === 'false') return false;
+  if (temiz !== '' && !isNaN(Number(temiz))) return Number(temiz);
+  return temiz;
+}
+
+/**
+ * Tek input'a yazılan değeri çözümler.
+ *  - "SL1...."  -> yöneticinin verdiği tek-ID kurulum kodu (her şey içinde)
+ *  - diğer      -> Smart Life cihaz ID'si + gizli site profili
+ */
+function cozSmartLifeId(hamDeger, profil = {}) {
+  const ham = String(hamDeger ?? '').trim();
+  if (!ham) return null;
+
+  if (/^SL1\./i.test(ham)) {
+    try {
+      const o = JSON.parse(base64urlCoz(ham.slice(4)));
+      if (!o.d) return null;
+      return {
+        deviceId: String(o.d).trim(),
+        clientId: String(o.c || '').trim(),
+        secret: String(o.s || '').trim(),
+        bolge: String(o.r || 'eu').trim(),
+        komutKodu: String(o.k || 'switch_1').trim(),
+        komutDegeri: degeriTipineCevir(o.v ?? true),
+      };
+    } catch {
+      return { hata: 'Smart Life ID okunamadı. Lütfen kontrol edip tekrar deneyin.' };
+    }
+  }
+
+  return {
+    deviceId: ham,
+    clientId: String(profil.clientId || '').trim(),
+    secret: String(profil.secret || '').trim(),
+    bolge: String(profil.bolge || 'eu').trim(),
+    komutKodu: String(profil.komutKodu || 'switch_1').trim(),
+    komutDegeri: degeriTipineCevir(profil.komutDegeri ?? true),
+  };
+}
+
+const BOLGE_ADRESLERI = {
+  eu: 'https://openapi.tuyaeu.com',
+  us: 'https://openapi.tuyaus.com',
+  cn: 'https://openapi.tuyacn.com',
+  in: 'https://openapi.tuyain.com',
+};
+
+/* ------------------------------------------------------------------ */
+/* HTTP katmanı (harici paket yok)                                     */
+/* ------------------------------------------------------------------ */
+
+async function fetchHttp({ url, method, headers, body }) {
+  const yanit = await fetch(url, {
+    method,
+    headers,
+    body: method === 'GET' ? undefined : (body || undefined),
+  });
+  let json;
+  try { json = await yanit.json(); } catch { json = null; }
+  return { status: yanit.status, json };
+}
+
+async function capacitorHttp({ url, method, headers, body }) {
+  const eklenti = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Http;
+  const yanit = await eklenti.request({
+    url,
+    method,
+    headers,
+    data: body ? JSON.parse(body) : undefined,
+  });
+  const veri = typeof yanit.data === 'string' ? JSON.parse(yanit.data) : yanit.data;
+  return { status: yanit.statusCode || yanit.status, json: veri };
+}
+
+function varsayilanHttp() {
+  if (typeof window !== 'undefined') {
+    const cap = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Http;
+    if (cap) return capacitorHttp;
+  }
+  return fetchHttp;
+}
+
+/** Yalnızca tek-ID alır; geri kalanını kendisi çözer. */
+async function kapiyiAc(ayar, secenekler = {}) {
+  const tekId = String((ayar && (ayar.smartLifeId ?? ayar.id)) ?? '').trim();
+  if (!tekId) return { basarili: false, mesaj: 'Lütfen Smart Life ID\'nizi girin.' };
+
+  // Tarayıcıda yerel sunucu varsa bulut çağrısı sunucu tarafında yapılır
+  // (bulut API'si tarayıcı kökenlerine CORS izni vermediği için).
+  if (secenekler.sunucuKoprusu !== false &&
+      typeof window !== 'undefined' &&
+      /^https?:$/.test(window.location.protocol)) {
+    try {
+      const yanit = await fetch('/api/kapi-ac', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ smartLifeId: tekId }),
+      });
+      return await yanit.json();
+    } catch (hata) {
+      return { basarili: false, mesaj: 'Bağlantı kurulamadı. Lütfen tekrar deneyin.' };
+    }
+  }
+
+  let profil = secenekler.profil;
+  if (!profil && typeof window !== 'undefined' && window.SITE_PROFILI) profil = window.SITE_PROFILI;
+  const coz = cozSmartLifeId(tekId, profil || {});
+  if (!coz) return { basarili: false, mesaj: 'Smart Life ID okunamadı.' };
+  if (coz.hata) return { basarili: false, mesaj: coz.hata };
+
+  const http = secenekler.http || varsayilanHttp();
+
+  if (!coz.clientId || !coz.secret) {
+    return {
+      basarili: false,
+      mesaj: 'Kapı açma servisi şu an hazır değil. Lütfen daha sonra tekrar deneyin.',
+    };
+  }
+
+  const taban = BOLGE_ADRESLERI[coz.bolge] || BOLGE_ADRESLERI.eu;
+
+  try {
+    // Adım 1: erişim anahtarı (tek-ID içinden gelen gizli profille)
+    const tokenYolu = '/v1.0/token?grant_type=1';
+    const t1 = Date.now().toString();
+    const tokenYanit = await http({
+      url: taban + tokenYolu,
+      method: 'GET',
+      headers: {
+        client_id: coz.clientId,
+        sign: imzaOlustur({ clientId: coz.clientId, secret: coz.secret, timestamp: t1, method: 'GET', pathWithQuery: tokenYolu }),
+        t: t1,
+        sign_method: 'HMAC-SHA256',
+      },
+    });
+    if (!tokenYanit.json || !tokenYanit.json.success || !tokenYanit.json.result?.access_token) {
+      return {
+        basarili: false,
+        mesaj: 'Smart Life bağlantısı doğrulanamadı. Lütfen ID\'nizi kontrol edip tekrar deneyin.',
+      };
+    }
+    const token = tokenYanit.json.result.access_token;
+
+    // Adım 2: kapı rölesine açma komutu (komut kodu da dahili)
+    const komutYolu = `/v1.0/iot-03/devices/${encodeURIComponent(coz.deviceId)}/commands`;
+    const govde = JSON.stringify({
+      commands: [{ code: coz.komutKodu, value: degeriTipineCevir(coz.komutDegeri) }],
+    });
+    const t2 = Date.now().toString();
+    const komutYanit = await http({
+      url: taban + komutYolu,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        client_id: coz.clientId,
+        access_token: token,
+        sign: imzaOlustur({
+          clientId: coz.clientId,
+          secret: coz.secret,
+          accessToken: token,
+          timestamp: t2,
+          method: 'POST',
+          pathWithQuery: komutYolu,
+          bodyStr: govde,
+        }),
+        t: t2,
+        sign_method: 'HMAC-SHA256',
+      },
+      body: govde,
+    });
+
+    if (!komutYanit.json || !komutYanit.json.success) {
+      return {
+        basarili: false,
+        mesaj: 'Kapıya açma komutu ulaşmadı. Lütfen tekrar deneyin.',
+      };
+    }
+    return { basarili: true, mesaj: 'Site kapısı açıldı!' };
+  } catch {
+    return { basarili: false, mesaj: 'Bağlantı kurulamadı. Lütfen tekrar deneyin.' };
+  }
+}
+
+const SmartLifeBaglantisi = {
+  kapiyiAc,
+  cozSmartLifeId,
+  smartLifeKodUret,
+  sha256Ozet,
+  hmacSha256Ozet,
+  imzaOlustur,
+};
+
+if (typeof window !== 'undefined') window.SmartLifeBaglantisi = SmartLifeBaglantisi;
+if (typeof module !== 'undefined' && module.exports) module.exports = SmartLifeBaglantisi;
+
+</script>
+  <script>
+/**
+ * SITE KAPISI MOTORU (tek-ID sürümü)
+ * ----------------------------------
+ * Kullanıcı ayarları: SADECE "smartLifeId".
+ * Kapı konumu, mesafeler, komut kodu vb. dahili olarak yönetilir;
+ * arayüzde bunlar için bir alan yoktur.
+ */
+
+const AYAR_ANAHTARI = 'site_kapi_ayarlari_v3';
+const DURUM_ANAHTARI = 'site_kapi_durumu_v3';
+
+const VARSAYILAN_AYARLAR = {
+  // TEK kullanıcı girdisi
+  smartLifeId: '',
+
+  // Dahili / otomatik öğrenilen değerler (kullanıcıya sorulmaz)
+  kapiEnlem: null,
+  kapiBoylam: null,
+  acilmaMesafesiMetre: 10,
+  sifirlamaMesafesiMetre: 80,
+  beklemeSuresiSaniye: 45,
+  otomatikAcmaAktif: true,
+};
+
+const VARSAYILAN_DURUM = {
+  korumaKilidiAktif: false,
+  sonAcilmaZamani: 0,
+  sonMesafeMetre: null,
+  sonSapmaMetre: null,
+  durumMesaji: 'Smart Life ID\'nizi girin; kapı konumu ilk testte otomatik öğrenilir.',
+  kayitlar: [],
+};
+
+const depolama = (function () {
+  if (typeof localStorage !== 'undefined') return localStorage;
+  const bellek = new Map();
+  return {
+    getItem: (anahtar) => (bellek.has(anahtar) ? bellek.get(anahtar) : null),
+    setItem: (anahtar, deger) => bellek.set(anahtar, deger),
+  };
+})();
+
+function mesafeHesaplaMetre(enlem1, boylam1, enlem2, boylam2) {
+  if (![enlem1, boylam1, enlem2, boylam2].every(Number.isFinite)) return null;
+  const dunyaYaricapi = 6371000;
+  const rad = (derece) => (derece * Math.PI) / 180;
+  const dLat = rad(enlem2 - enlem1);
+  const dLon = rad(boylam2 - boylam1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(rad(enlem1)) * Math.cos(rad(enlem2)) * Math.sin(dLon / 2) ** 2;
+  return dunyaYaricapi * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+const KapiMotoru = {
+  izlemeNo: null,
+  arkaPlanEklentiNo: null,
+  ekranUyanikTutucu: null,
+  calisiyorMu: false,
+  simulasyonModu: false,
+  tetiklemeSuruyorMu: false,
+  arayuzYenileici: null,
+
+  ayarlariYukle() {
+    try {
+      const ham = depolama.getItem(AYAR_ANAHTARI);
+      if (!ham) return { ...VARSAYILAN_AYARLAR };
+      return { ...VARSAYILAN_AYARLAR, ...JSON.parse(ham) };
+    } catch {
+      return { ...VARSAYILAN_AYARLAR };
+    }
+  },
+
+  ayarlariKaydet(yeni) {
+    const birlesik = { ...VARSAYILAN_AYARLAR, ...yeni };
+    depolama.setItem(AYAR_ANAHTARI, JSON.stringify(birlesik));
+    return birlesik;
+  },
+
+  smartLifeIdKaydet(id) {
+    return this.ayarlariKaydet({ ...this.ayarlariYukle(), smartLifeId: String(id || '').trim() });
+  },
+
+  /** Kapı konumu kullanıcıya sorulmaz; kapı önünde test açmasıyla öğrenilir. */
+  kapiyiKalibreEt(enlem, boylam, kayit = true) {
+    if (!Number.isFinite(enlem) || !Number.isFinite(boylam)) return false;
+    const ayar = this.ayarlariYukle();
+    ayar.kapiEnlem = Number(enlem.toFixed(6));
+    ayar.kapiBoylam = Number(boylam.toFixed(6));
+    this.ayarlariKaydet(ayar);
+    if (kayit) this.kayitEkle(`📍 Site kapısı konumu otomatik öğrenildi: ${ayar.kapiEnlem}, ${ayar.kapiBoylam}`);
+    return true;
+  },
+
+  kalibrasyonVarMi() {
+    const ayar = this.ayarlariYukle();
+    if (!Number.isFinite(ayar.kapiEnlem) || !Number.isFinite(ayar.kapiBoylam)) return false;
+    // Simülatörden / hatalı ölçümden kalan (0,0) koordinatı geçerli sayılmaz.
+    if (Math.abs(ayar.kapiEnlem) < 0.001 && Math.abs(ayar.kapiBoylam) < 0.001) return false;
+    return true;
+  },
+
+  /** Kapı konumunu sıfırlar; kullanıcı kapı önünde "Şimdi Aç"a basarak yeniden öğretir. */
+  kalibrasyonuSifirla() {
+    const ayar = this.ayarlariYukle();
+    ayar.kapiEnlem = null;
+    ayar.kapiBoylam = null;
+    this.ayarlariKaydet(ayar);
+    const durum = this.durumuYukle();
+    durum.sonMesafeMetre = null;
+    durum.sonSapmaMetre = null;
+    durum.korumaKilidiAktif = false;
+    durum.durumMesaji = 'Kapı konumu sıfırlandı. Kapı önünde bir kez "Şimdi Aç"a basın.';
+    this.durumuKaydet(durum);
+    this.kayitEkle('📍 Kapı konumu sıfırlandı; yeniden öğrenilecek.');
+    return durum;
+  },
+
+  durumuYukle() {
+    try {
+      const ham = depolama.getItem(DURUM_ANAHTARI);
+      if (!ham) return { ...VARSAYILAN_DURUM };
+      return { ...VARSAYILAN_DURUM, ...JSON.parse(ham) };
+    } catch {
+      return { ...VARSAYILAN_DURUM };
+    }
+  },
+
+  durumuKaydet(yeniDurum) {
+    depolama.setItem(DURUM_ANAHTARI, JSON.stringify(yeniDurum));
+    if (typeof this.arayuzYenileici === 'function') this.arayuzYenileici(yeniDurum);
+  },
+
+  kayitEkle(mesaj) {
+    const durum = this.durumuYukle();
+    const saat = new Date().toLocaleTimeString('tr-TR');
+    durum.kayitlar = [`[${saat}] ${mesaj}`, ...(durum.kayitlar || [])].slice(0, 50);
+    this.durumuKaydet(durum);
+  },
+
+  bildirimGoster(baslik, icerik) {
+    try {
+      if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+        new Notification(baslik, { body: icerik });
+      }
+      const AudioCtx = typeof window !== 'undefined' && (window.AudioContext || window.webkitAudioContext);
+      if (AudioCtx) {
+        const ctx = new AudioCtx();
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(frekans, ctx.currentTime);
+        osc.frequency.setValueAtTime(880, ctx.currentTime);
         gain.gain.setValueAtTime(0.08, ctx.currentTime);
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start();
-        osc.stop(ctx.currentTime + sure);
-      } catch {}
+        osc.stop(ctx.currentTime + 0.18);
+      }
+    } catch { /* sessizce geç */ }
+  },
+
+  async mesafeyiDegerlendir(hamMesafeMetre, sapmaMetre = 3) {
+    const ayar = this.ayarlariYukle();
+    const durum = this.durumuYukle();
+    const mesafe = Math.round(Number(hamMesafeMetre) * 10) / 10;
+    const simdi = Date.now();
+
+    durum.sonMesafeMetre = mesafe;
+    durum.sonSapmaMetre = sapmaMetre ? Math.round(sapmaMetre) : null;
+
+    if (!ayar.smartLifeId && !this.simulasyonModu) {
+      durum.durumMesaji = 'Smart Life ID\'nizi girin.';
+      this.durumuKaydet(durum);
+      return;
     }
 
-    function bildirimGoster(mesaj, renk = '#065f46') {
-      const k = document.getElementById('bildirimKutusu');
-      k.textContent = mesaj;
-      k.style.background = renk;
-      k.style.display = 'block';
-      clearTimeout(window._bildirimSure);
-      window._bildirimSure = setTimeout(() => { k.style.display = 'none'; }, 3400);
+    if (!this.simulasyonModu && !this.kalibrasyonVarMi()) {
+      // Kalibrasyon yokken (0,0)'a olan mesafeyi göstermek sahte bir sayı üretir.
+      durum.sonMesafeMetre = null;
+      durum.durumMesaji = 'Kapı konumu öğreniliyor: kapı önünde bir kez "Şimdi Aç"a basın.';
+      this.durumuKaydet(durum);
+      return;
     }
 
-    function kayitEkle(metin) {
-      const saat = new Date().toLocaleTimeString('tr-TR');
-      kayitListesi.unshift(`[${saat}] ${metin}`);
-      kayitListesi = kayitListesi.slice(0, 40);
-      document.getElementById('kayitSayisi').textContent = kayitListesi.length;
-      document.getElementById('kayitAlani').innerHTML = kayitListesi
-        .map((s) => `<div class="kayit-satir">${s}</div>`)
-        .join('');
+    if (!ayar.otomatikAcmaAktif) {
+      durum.durumMesaji = 'Otomatik kapı açma şu an kapalı.';
+      this.durumuKaydet(durum);
+      return;
     }
 
-    function gorselKapiDurumuAyarla(acikMi) {
-      kapiAcikGorunum = acikMi;
-      document.getElementById('kanatSol').classList.toggle('acik', acikMi);
-      document.getElementById('kanatSag').classList.toggle('acik', acikMi);
-      const isik = document.getElementById('kapiIsigi');
-      isik.classList.toggle('acik', acikMi);
-      isik.textContent = acikMi ? '● KAPI AÇILDI' : '● KAPI KAPALI';
+    if (durum.korumaKilidiAktif) {
+      if (mesafe >= ayar.sifirlamaMesafesiMetre) {
+        durum.korumaKilidiAktif = false;
+        durum.durumMesaji = `Siteden uzaklaşıldı — dönüşte ${ayar.acilmaMesafesiMetre}m kala kapı açılacak.`;
+        this.durumuKaydet(durum);
+        this.kayitEkle(`🔄 Kapıdan ${mesafe}m uzaklaşıldı; otomatik açıcı yeniden kuruldu.`);
+        this.bildirimGoster('Kapı Otomasyonu Hazır 🔄', 'Dönüşünüzde kapı otomatik açılacak.');
+        return;
+      }
+      durum.durumMesaji = `Kapı açıldı (kilitli). Yeniden kurulması için ${ayar.sifirlamaMesafesiMetre}m uzaklaşın.`;
+      this.durumuKaydet(durum);
+      return;
     }
 
-    function sekmeDegistir(ad) {
-      ['radar', 'baglanti', 'gecmis'].forEach((s) => {
+    if (mesafe <= ayar.acilmaMesafesiMetre) {
+      if (this.tetiklemeSuruyorMu) return;
+      const gecen = (simdi - (durum.sonAcilmaZamani || 0)) / 1000;
+      if (gecen < ayar.beklemeSuresiSaniye) {
+        durum.durumMesaji = `Bekleme süresinde (${Math.ceil(ayar.beklemeSuresiSaniye - gecen)} sn kaldı).`;
+        this.durumuKaydet(durum);
+        return;
+      }
+
+      if (this.simulasyonModu) {
+        // Test modunda gerçek kapıya komut gönderilmez; sadece akış test edilir.
+        durum.korumaKilidiAktif = true;
+        durum.sonAcilmaZamani = simdi;
+        durum.durumMesaji = `🧪 Test tetiklemesi: ${mesafe}m (gerçek kapıya komut gönderilmedi).`;
+        this.durumuKaydet(durum);
+        this.kayitEkle(`🧪 TEST: ${mesafe}m yaklaşma algılandı; gerçek komut gönderilmedi.`);
+        return;
+      }
+
+      this.tetiklemeSuruyorMu = true;
+      durum.korumaKilidiAktif = true;
+      durum.sonAcilmaZamani = simdi;
+      durum.durumMesaji = '🎯 Yaklaşma algılandı; kapı açılıyor...';
+      this.durumuKaydet(durum);
+      this.kayitEkle(`🎯 Kapıya ${mesafe}m yaklaşıldı; açma komutu gönderiliyor...`);
+
+      const baglanti = typeof window !== 'undefined' ? window.SmartLifeBaglantisi : null;
+      const sonuc = baglanti ? await baglanti.kapiyiAc(ayar) : { basarili: false, mesaj: 'Bağlantı modülü yüklenemedi.' };
+      this.tetiklemeSuruyorMu = false;
+
+      const guncel = this.durumuYukle();
+      if (sonuc.basarili) {
+        guncel.durumMesaji = '✅ Site kapısı otomatik açıldı!';
+        this.durumuKaydet(guncel);
+        this.kayitEkle('✅ BAŞARILI: ' + sonuc.mesaj);
+        this.bildirimGoster('🚗 Site Kapısı Açıldı!', `Kapıya ${mesafe} metre yaklaştınız.`);
+      } else {
+        guncel.durumMesaji = '⚠️ Tetiklendi ancak: ' + sonuc.mesaj;
+        this.durumuKaydet(guncel);
+        this.kayitEkle('⚠️ UYARI: ' + sonuc.mesaj);
+        this.bildirimGoster('⚠️ Kapı Komutu Uyarısı', sonuc.mesaj);
+      }
+      return;
+    }
+
+    durum.durumMesaji = `Kapıya ${mesafe} metre uzaklıktasınız (${ayar.acilmaMesafesiMetre}m kala açılır).`;
+    this.durumuKaydet(durum);
+  },
+
+  async koordinatiDegerlendir(enlem, boylam, sapma) {
+    if (this.simulasyonModu) return;
+    const ayar = this.ayarlariYukle();
+
+    if (!this.kalibrasyonVarMi() || !Number.isFinite(enlem) || !Number.isFinite(boylam)) {
+      const durum = this.durumuYukle();
+      durum.sonMesafeMetre = null;
+      durum.sonSapmaMetre = Number.isFinite(sapma) ? Math.round(sapma) : null;
+      durum.durumMesaji = 'Kapı konumu öğreniliyor: kapı önünde bir kez "Şimdi Aç"a basın.';
+      this.durumuKaydet(durum);
+      return;
+    }
+
+    const mesafe = mesafeHesaplaMetre(enlem, boylam, ayar.kapiEnlem, ayar.kapiBoylam);
+    if (mesafe === null) return;
+
+    // 10 m eşiğinde güvenilmez GPS ölçümü yanlış tetikleme yapmasın.
+    if (Number.isFinite(sapma) && sapma > 25) {
+      const durum = this.durumuYukle();
+      durum.sonMesafeMetre = mesafe;
+      durum.sonSapmaMetre = Math.round(sapma);
+      durum.durumMesaji = `GPS sinyali zayıf (±${Math.round(sapma)}m). Mesafe yaklaşık ${Math.round(mesafe)}m; tetikleme bekletildi.`;
+      this.durumuKaydet(durum);
+      return;
+    }
+
+    await this.mesafeyiDegerlendir(mesafe, sapma);
+  },
+
+  async takibiBaslat() {
+    if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
+      try { await Notification.requestPermission(); } catch { /* yoksay */ }
+    }
+    if (typeof navigator !== 'undefined' && navigator.wakeLock) {
+      try { this.ekranUyanikTutucu = await navigator.wakeLock.request('screen'); } catch { /* yoksay */ }
+    }
+
+    const bg = typeof window !== 'undefined' && window.Capacitor?.Plugins?.BackgroundGeolocation;
+    if (bg) {
+      try {
+        this.arkaPlanEklentiNo = await bg.addWatcher(
+          {
+            backgroundMessage: 'Site kapısına yaklaştığınızda kapı otomatik açılacak.',
+            backgroundTitle: '🛡️ Site Kapısı Otomatik Açıcı Aktif',
+            requestPermissions: true,
+            stale: false,
+            distanceFilter: 2,
+          },
+          (konum, hata) => {
+            if (hata) { this.kayitEkle('⚠️ Konum uyarısı: ' + (hata.message || hata.code)); return; }
+            if (konum) this.koordinatiDegerlendir(konum.latitude, konum.longitude, konum.accuracy);
+          }
+        );
+        this.calisiyorMu = true;
+        this.kayitEkle('🚀 Arka plan 10m hassas takip başlatıldı.');
+        return { basarili: true, mesaj: 'Arka plan takibi aktif!' };
+      } catch { this.kayitEkle('ℹ️ Standart GPS moduna geçiliyor...'); }
+    }
+
+    if (typeof navigator === 'undefined' || !('geolocation' in navigator)) {
+      return { basarili: false, mesaj: 'Bu cihazda konum özelliği yok; simülatörü kullanabilirsiniz.' };
+    }
+    if (this.izlemeNo !== null) navigator.geolocation.clearWatch(this.izlemeNo);
+    this.izlemeNo = navigator.geolocation.watchPosition(
+      (poz) => this.koordinatiDegerlendir(poz.coords.latitude, poz.coords.longitude, poz.coords.accuracy),
+      () => {
+        const durum = this.durumuYukle();
+        durum.durumMesaji = 'GPS sinyali bekleniyor veya konum izni verilmedi.';
+        this.durumuKaydet(durum);
+      },
+      { enableHighAccuracy: true, maximumAge: 1000, timeout: 10000 }
+    );
+    this.calisiyorMu = true;
+    this.kayitEkle('🚀 Yüksek hassasiyetli konum takibi başlatıldı.');
+    return { basarili: true, mesaj: '10 metre hassas konum takibi başlatıldı!' };
+  },
+
+  async takibiDurdur() {
+    if (typeof navigator !== 'undefined' && this.izlemeNo !== null) {
+      navigator.geolocation.clearWatch(this.izlemeNo);
+      this.izlemeNo = null;
+    }
+    const bg = typeof window !== 'undefined' && window.Capacitor?.Plugins?.BackgroundGeolocation;
+    if (bg && this.arkaPlanEklentiNo) {
+      try { await bg.removeWatcher({ id: this.arkaPlanEklentiNo }); } catch { /* yoksay */ }
+      this.arkaPlanEklentiNo = null;
+    }
+    if (this.ekranUyanikTutucu) {
+      try { await this.ekranUyanikTutucu.release(); } catch { /* yoksay */ }
+      this.ekranUyanikTutucu = null;
+    }
+    this.calisiyorMu = false;
+    const durum = this.durumuYukle();
+    durum.durumMesaji = 'Konum takibi durduruldu.';
+    this.durumuKaydet(durum);
+    this.kayitEkle('⏹️ Konum takibi durduruldu.');
+  },
+
+  korumaKilidiniSifirla() {
+    const durum = this.durumuYukle();
+    durum.korumaKilidiAktif = false;
+    durum.sonAcilmaZamani = 0;
+    durum.durumMesaji = 'Koruma kilidi sıfırlandı; kapı tekrar açılmaya hazır.';
+    this.durumuKaydet(durum);
+    this.kayitEkle('🔓 Koruma kilidi elle sıfırlandı.');
+  },
+};
+
+if (typeof window !== 'undefined') window.KapiMotoru = KapiMotoru;
+if (typeof module !== 'undefined' && module.exports) module.exports = KapiMotoru;
+
+</script>
+  <script>
+    function balonGoster(metin, tur = 'basari') {
+      const b = document.getElementById('bildirimBalonu');
+      b.textContent = metin;
+      b.className = 'toast show' + (tur === 'hata' ? ' hata' : tur === 'bilgi' ? ' bilgi' : '');
+      clearTimeout(window._balonZamanlayici);
+      window._balonZamanlayici = setTimeout(() => { b.classList.remove('show'); }, 3200);
+    }
+
+    function sekmeAc(ad) {
+      ['ana', 'gecmis'].forEach((s) => {
         document.getElementById('sekme-' + s).classList.toggle('aktif', s === ad);
         document.getElementById('menu-' + s).classList.toggle('aktif', s === ad);
       });
     }
 
-    function yontemSec(y) {
-      ['cihaz', 'senaryo', 'ozel'].forEach((k) => {
-        document.getElementById('sec-' + k).classList.toggle('aktif', k === y);
-      });
-      document.getElementById('kutuTuya').style.display = y === 'ozel' ? 'none' : 'block';
-      document.getElementById('kutuCihazNo').style.display = y === 'cihaz' ? 'block' : 'none';
-      document.getElementById('kutuOzel').style.display = y === 'ozel' ? 'block' : 'none';
+    function smartLifeIdKaydet() {
+      const id = document.getElementById('girdiSmartLifeId').value.trim();
+      KapiMotoru.smartLifeIdKaydet(id);
+      if (id) {
+        KapiMotoru.kayitEkle('🔑 Smart Life ID kaydedildi.');
+        balonGoster('✅ Smart Life ID kaydedildi. Başka bir şey girmenize gerek yok!');
+      }
+      arayuzuGuncelle(KapiMotoru.durumuYukle());
     }
 
-    function mesafeDegerlendir(mesafe) {
-      const acilmaSiniri = parseFloat(document.getElementById('girdiAcilma').value) || 10;
-      const sifirlamaSiniri = parseFloat(document.getElementById('girdiSifirlama').value) || 80;
-      const netMesafe = Math.round(mesafe * 10) / 10;
+    function arayuzuGuncelle(durum) {
+      const ayar = KapiMotoru.ayarlariYukle();
+      const mesafe = durum.sonMesafeMetre;
+      const iceride = Number.isFinite(mesafe) && mesafe <= ayar.acilmaMesafesiMetre;
 
-      document.getElementById('mesafeYazi').textContent = netMesafe.toFixed(1) + ' m';
-      document.getElementById('kaydiriciDeger').textContent = netMesafe + 'm';
-      document.getElementById('mesafeCubugu').value = netMesafe;
+      const mesafeDegeri = document.getElementById('mesafeDegeri');
+      const mesafeBirimi = document.getElementById('mesafeBirimi');
+      if (mesafe === null || mesafe === undefined || !Number.isFinite(mesafe)) {
+        mesafeDegeri.textContent = '--';
+        mesafeBirimi.textContent = 'METRE';
+      } else if (mesafe >= 1000) {
+        mesafeDegeri.textContent = (mesafe / 1000).toFixed(1);
+        mesafeBirimi.textContent = 'KM';
+      } else {
+        mesafeDegeri.textContent = String(mesafe);
+        mesafeBirimi.textContent = 'METRE';
+      }
+      document.getElementById('durumAciklama').textContent = durum.durumMesaji || '';
+      document.getElementById('radarKarti').classList.toggle('is-near', iceride);
+      document.getElementById('hassasiyetBilgi').textContent =
+        `${durum.sonSapmaMetre ? 'GPS Sapma: ±' + durum.sonSapmaMetre + 'm | ' : ''}Açılma Sınırı: ≤ ${ayar.acilmaMesafesiMetre}m`;
 
-      // Aracın yoldaki görsel konumu (110m -> en altta, 0m -> kapının önünde)
-      const oran = Math.max(0, Math.min(1, (110 - netMesafe) / 110));
-      document.getElementById('aracIkonu').style.bottom = (4 + oran * 56) + 'px';
+      const kilitKutusu = document.getElementById('kilitKutusu');
+      kilitKutusu.style.display = durum.korumaKilidiAktif ? 'block' : 'none';
+      document.getElementById('kilitAciklama').textContent =
+        `Kapı açıldı. ${ayar.sifirlamaMesafesiMetre} metre uzaklaştığınızda otomatik yeniden kurulur.`;
 
-      const sahne = document.getElementById('sahneKarti');
-      sahne.classList.toggle('acildi', netMesafe <= acilmaSiniri);
+      const aktif = KapiMotoru.calisiyorMu || KapiMotoru.simulasyonModu;
+      const etiket = document.getElementById('servisEtiketi');
+      etiket.textContent = aktif ? 'TAKİP AKTİF' : 'DURDURULDU';
+      etiket.classList.toggle('is-active', aktif);
 
-      // Koruma Kilidi Kontrolü
-      if (korumaKilidi) {
-        if (netMesafe >= sifirlamaSiniri) {
-          korumaKilidi = false;
-          gorselKapiDurumuAyarla(false);
-          document.getElementById('kilitUyari').style.display = 'none';
-          document.getElementById('durumCumlesi').textContent =
-            `🔄 Siteden ${netMesafe}m uzaklaşıldı! Otomatik açıcı dönüşünüz için tekrar kuruldu.`;
-          kayitEkle(`🔄 Siteden uzaklaşıldı (${netMesafe}m). Sistem tekrar aktif!`);
-          bildirimGoster('🔄 Otomatik açıcı dönüşünüz için tekrar hazır!', '#0284c7');
-          return;
-        }
-        document.getElementById('kilitUyari').style.display = 'flex';
-        document.getElementById('durumCumlesi').textContent =
-          `✅ Kapı açıldı! Tekrar kurulması için siteden ${sifirlamaSiniri}m uzaklaşmanız bekleniyor.`;
+      const buton = document.getElementById('takipButonu');
+      if (KapiMotoru.calisiyorMu) {
+        buton.textContent = '⏹️ Otomatik Kapı Açıcıyı Durdur';
+        buton.className = 'btn btn-danger';
+      } else {
+        buton.textContent = `🚀 ${ayar.acilmaMesafesiMetre} Metre Otomatik Açıcıyı Başlat`;
+        buton.className = 'btn btn-primary';
+      }
+
+      document.getElementById('kayitSayaci').textContent = (durum.kayitlar || []).length;
+      const liste = document.getElementById('kayitListesi');
+      liste.innerHTML = (durum.kayitlar || []).length
+        ? `<div class="timeline">${durum.kayitlar.map((k) => `<div class="timeline-item"><span class="dot"></span>${k}</div>`).join('')}</div>`
+        : '<p class="empty-note">Henüz bir işlem kaydı yok.</p>';
+    }
+
+    async function takibiDegistir() {
+      const ayar = KapiMotoru.ayarlariYukle();
+      if (!ayar.smartLifeId) {
+        balonGoster('Önce Smart Life ID\'nizi girin.', 'hata');
+        return;
+      }
+      if (KapiMotoru.calisiyorMu) {
+        await KapiMotoru.takibiDurdur();
+        balonGoster('⏹️ Konum takibi durduruldu.', 'bilgi');
+      } else {
+        const sonuc = await KapiMotoru.takibiBaslat();
+        balonGoster(sonuc.mesaj, sonuc.basarili ? 'basari' : 'hata');
+      }
+      arayuzuGuncelle(KapiMotoru.durumuYukle());
+    }
+
+    async function kapiyiElleAc() {
+      const ayar = KapiMotoru.ayarlariYukle();
+      if (!ayar.smartLifeId) {
+        balonGoster('Önce Smart Life ID\'nizi girin.', 'hata');
         return;
       }
 
-      // 10 Metre Altına Girildiği An Kapıyı Aç!
-      if (netMesafe <= acilmaSiniri) {
-        korumaKilidi = true;
-        gorselKapiDurumuAyarla(true);
-        sesCal(880, 0.16);
-        setTimeout(() => sesCal(1174, 0.22), 170);
-
-        document.getElementById('kilitUyari').style.display = 'flex';
-        document.getElementById('durumCumlesi').textContent =
-          `🎯 ${netMesafe} metre! Smart Life üzerinden site kapısı otomatik açıldı!`;
-
-        kayitEkle(`🎯 Kapıya ${netMesafe}m yaklaşıldı (≤${acilmaSiniri}m) -> Smart Life Kapı Açma komutu gönderildi ✅`);
-        bildirimGoster(`🚗 Site Kapısı Otomatik Açıldı! (Mesafe: ${netMesafe}m)`);
-
-        // Eğer gerçek Webhook girilmişse arka planda onu da çağır
-        const webhook = document.getElementById('girdiWebhook').value.trim();
-        if (webhook) {
-          fetch(webhook, { method: 'POST', mode: 'no-cors' }).catch(() => {});
-        }
-        return;
+      // Kapı konumu sorulmaz; kapı önünde yapılan bu testle kendiliğinden öğrenilir.
+      if (navigator.geolocation && !KapiMotoru.simulasyonModu) {
+        try {
+          const poz = await new Promise((coz, red) =>
+            navigator.geolocation.getCurrentPosition(coz, red, { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 })
+          );
+          const hassasiyet = poz.coords.accuracy;
+          if (!Number.isFinite(hassasiyet) || hassasiyet <= 50) {
+            KapiMotoru.kapiyiKalibreEt(poz.coords.latitude, poz.coords.longitude);
+          } else {
+            balonGoster('Konum hassasiyeti düşük; kapı konumu güncellenmedi.', 'hata');
+          }
+        } catch { /* konum izni yoksa mevcut kalibrasyon kullanılır */ }
       }
 
-      document.getElementById('durumCumlesi').textContent =
-        `Kapıya ${netMesafe}m uzaklıktasınız (${acilmaSiniri}m sınırına girince otomatik açılır).`;
+      balonGoster('📡 Kapı açılıyor...', 'bilgi');
+      KapiMotoru.kayitEkle('👆 Kapıyı şimdi açma düğmesine basıldı.');
+      const sonuc = await SmartLifeBaglantisi.kapiyiAc(ayar);
+      if (sonuc.basarili) {
+        KapiMotoru.kayitEkle('✅ ' + sonuc.mesaj);
+        balonGoster('🚗 ' + sonuc.mesaj);
+      } else {
+        KapiMotoru.kayitEkle('⚠️ ' + sonuc.mesaj);
+        balonGoster('⚠️ ' + sonuc.mesaj, 'hata');
+      }
+      arayuzuGuncelle(KapiMotoru.durumuYukle());
     }
 
-    function elleMesafeDegistir(deger) {
-      if (surusZamanlayici) {
-        clearInterval(surusZamanlayici);
-        surusZamanlayici = null;
-        document.getElementById('demoButonu').textContent = '▶️ Arabayla Kapıya Yaklaşmayı Canlandır (Demo)';
+    function simulatorDegistir(aktif) {
+      KapiMotoru.simulasyonModu = aktif;
+      document.getElementById('simulatorAlani').style.display = aktif ? 'block' : 'none';
+      if (aktif) {
+        // Gerçek kapı koordinatı asla değiştirilmez; test tamamen sanal mesafe ile yapılır.
+        KapiMotoru.mesafeyiDegerlendir(parseFloat(document.getElementById('simulatorCubugu').value), 2);
+      } else {
+        const durum = KapiMotoru.durumuYukle();
+        durum.sonMesafeMetre = null;
+        durum.sonSapmaMetre = null;
+        durum.durumMesaji = KapiMotoru.kalibrasyonVarMi()
+          ? 'Gerçek konum takibi bir sonraki GPS sinyaliyle güncellenecek.'
+          : 'Kapı konumu öğreniliyor: kapı önünde bir kez "Şimdi Aç"a basın.';
+        KapiMotoru.durumuKaydet(durum);
+        arayuzuGuncelle(durum);
       }
-      mesafeDegerlendir(parseFloat(deger));
     }
 
-    function otomatikSurusBaslat() {
-      if (surusZamanlayici) {
-        clearInterval(surusZamanlayici);
-        surusZamanlayici = null;
-        document.getElementById('demoButonu').textContent = '▶️ Arabayla Kapıya Yaklaşmayı Canlandır (Demo)';
-        return;
-      }
+    function konumuSifirla() {
+      const durum = KapiMotoru.kalibrasyonuSifirla();
+      balonGoster('📍 Kapı konumu sıfırlandı. Kapı önünde "Şimdi Aç"a basın.', 'bilgi');
+      arayuzuGuncelle(durum);
+    }
 
-      // Baştan başlat (95 metreden kapıya doğru yaklaşsın)
-      korumaKilidi = false;
-      gorselKapiDurumuAyarla(false);
-      document.getElementById('kilitUyari').style.display = 'none';
-      let anlikMesafe = 95;
-      mesafeDegerlendir(anlikMesafe);
-
-      document.getElementById('demoButonu').textContent = '⏹️ Canlandırmayı Durdur (Araç Yaklaşıyor...)';
-      kayitEkle('🚘 Demo başlatıldı: Araç 95 metreden site kapısına yaklaşıyor...');
-
-      surusZamanlayici = setInterval(() => {
-        anlikMesafe -= 2.5;
-        if (anlikMesafe <= 4) {
-          mesafeDegerlendir(4);
-          clearInterval(surusZamanlayici);
-          surusZamanlayici = null;
-          document.getElementById('demoButonu').textContent = '▶️ Tekrar Canlandır (Demo)';
-          return;
-        }
-        mesafeDegerlendir(anlikMesafe);
-      }, 120);
+    function simulatorMesafeGuncelle(deger) {
+      KapiMotoru.mesafeyiDegerlendir(parseFloat(deger), 2);
     }
 
     function kilidiSifirla() {
-      korumaKilidi = false;
-      gorselKapiDurumuAyarla(false);
-      document.getElementById('kilitUyari').style.display = 'none';
-      kayitEkle('🔓 Koruma kilidi sıfırlandı, kapı kapandı.');
-      bildirimGoster('🔓 Kilit sıfırlandı, tekrar denemeye hazır!');
+      KapiMotoru.korumaKilidiniSifirla();
+      balonGoster('🔓 Koruma kilidi sıfırlandı!');
     }
 
-    function kapidanTestGonder() {
-      gorselKapiDurumuAyarla(true);
-      sesCal(980, 0.2);
-      kayitEkle('👆 Elle kapı açma testi tetiklendi -> Kapı açıldı ✅');
-      bildirimGoster('🚗 Site kapısına açma sinyali gönderildi!');
-      setTimeout(() => {
-        if (!korumaKilidi) gorselKapiDurumuAyarla(false);
-      }, 4000);
-    }
-
-    function ayarlariKaydet(bildir = false) {
-      const a = parseFloat(document.getElementById('girdiAcilma').value) || 10;
-      const s = parseFloat(document.getElementById('girdiSifirlama').value) || 80;
-      document.getElementById('hedefYazi').textContent = a;
-      document.getElementById('sifirYazi').textContent = s;
-      document.getElementById('ustAltYazi').textContent = `Smart Life • ${a}m Otomatik Tetikleyici`;
-      try {
-        localStorage.setItem('site_kapi_tek_dosya', JSON.stringify({
-          acilma: a,
-          sifirlama: s,
-          clientId: document.getElementById('girdiClientId').value,
-          deviceId: document.getElementById('girdiDeviceId').value,
-          komut: document.getElementById('girdiKomut').value,
-          deger: document.getElementById('girdiDeger').value,
-          webhook: document.getElementById('girdiWebhook').value,
-          kapiEnlem,
-          kapiBoylam,
-        }));
-      } catch {}
-      if (bildir) {
-        kayitEkle('💾 Bağlantı ve mesafe ayarları kaydedildi.');
-        bildirimGoster('✅ Ayarlar kaydedildi!');
-      }
-    }
-
-    function konumuKapiYap() {
-      if (!navigator.geolocation) {
-        bildirimGoster('Bu cihazda GPS bulunamadı.', '#b91c1c');
-        return;
-      }
-      bildirimGoster('📍 Konumunuz alınıyor...', '#0284c7');
-      navigator.geolocation.getCurrentPosition(
-        (p) => {
-          kapiEnlem = p.coords.latitude;
-          kapiBoylam = p.coords.longitude;
-          ayarlariKaydet(false);
-          kayitEkle(`📍 Site kapısı koordinatı kaydedildi (${kapiEnlem.toFixed(5)}, ${kapiBoylam.toFixed(5)})`);
-          bildirimGoster('📍 Bulunduğunuz nokta Site Kapısı olarak kaydedildi!');
-        },
-        () => bildirimGoster('Konum izni verilmedi (Demo modunu kullanabilirsiniz).', '#b91c1c'),
-        { enableHighAccuracy: true }
-      );
-    }
-
-    function gercekGpsBaslat() {
-      if (!navigator.geolocation) {
-        bildirimGoster('Bu cihazda GPS bulunamadı.', '#b91c1c');
-        return;
-      }
-      if (gpsIzleyici) {
-        navigator.geolocation.clearWatch(gpsIzleyici);
-        gpsIzleyici = null;
-        bildirimGoster('⏹️ Gerçek GPS takibi durduruldu.', '#475569');
-        return;
-      }
-      bildirimGoster('📡 Gerçek GPS takibi başlatıldı!', '#065f46');
-      kayitEkle('📡 Gerçek GPS 10m mesafe takibi başlatıldı.');
-      gpsIzleyici = navigator.geolocation.watchPosition(
-        (p) => {
-          const R = 6371000;
-          const rad = (d) => (d * Math.PI) / 180;
-          const dLat = rad(kapiEnlem - p.coords.latitude);
-          const dLon = rad(kapiBoylam - p.coords.longitude);
-          const a = Math.sin(dLat / 2) ** 2 +
-            Math.cos(rad(p.coords.latitude)) * Math.cos(rad(kapiEnlem)) * Math.sin(dLon / 2) ** 2;
-          const m = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-          mesafeDegerlendir(m);
-        },
-        () => bildirimGoster('GPS sinyali alınamadı.', '#b91c1c'),
-        { enableHighAccuracy: true, maximumAge: 1000 }
-      );
-    }
-
-    function kayitlariSil() {
-      kayitListesi = [];
-      document.getElementById('kayitSayisi').textContent = '0';
-      document.getElementById('kayitAlani').innerHTML = '<p class="kart-aciklama">Henüz kayıt yok.</p>';
+    function kayitlariTemizle() {
+      const durum = KapiMotoru.durumuYukle();
+      durum.kayitlar = [];
+      KapiMotoru.durumuKaydet(durum);
+      arayuzuGuncelle(KapiMotoru.durumuYukle());
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      try {
-        const kayitli = JSON.parse(localStorage.getItem('site_kapi_tek_dosya') || '{}');
-        if (kayitli.acilma) document.getElementById('girdiAcilma').value = kayitli.acilma;
-        if (kayitli.sifirlama) document.getElementById('girdiSifirlama').value = kayitli.sifirlama;
-        if (kayitli.clientId) document.getElementById('girdiClientId').value = kayitli.clientId;
-        if (kayitli.deviceId) document.getElementById('girdiDeviceId').value = kayitli.deviceId;
-        if (kayitli.webhook) document.getElementById('girdiWebhook').value = kayitli.webhook;
-        if (kayitli.kapiEnlem) kapiEnlem = kayitli.kapiEnlem;
-        if (kayitli.kapiBoylam) kapiBoylam = kayitli.kapiBoylam;
-      } catch {}
-      kayitEkle('🚀 Uygulama hazır. Canlandırma (Demo) düğmesine basarak test edebilirsiniz.');
-      mesafeDegerlendir(85);
+      KapiMotoru.arayuzYenileici = arayuzuGuncelle;
+      document.getElementById('girdiSmartLifeId').value = KapiMotoru.ayarlariYukle().smartLifeId || '';
+      arayuzuGuncelle(KapiMotoru.durumuYukle());
     });
   </script>
 </body>

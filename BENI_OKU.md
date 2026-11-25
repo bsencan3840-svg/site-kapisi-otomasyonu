@@ -1,28 +1,52 @@
-# 🚗 Site Kapısı Otomasyonu (Android & iPhone)
+# 🚗 Site Kapısı
 
-Aracı hiçbir programa ihtiyaç duymadan, **site kapısına 10 metre yaklaşıldığında** arka planda **Smart Life** üzerinden kapıyı otomatik açan kendi özel uygulamanız!
+Site kapısına **10 metre** yaklaşınca kapıyı otomatik açan uygulama.
 
----
+## 🌐 Canlı adres
 
-## ▶️ 1. Bilgisayarınızda Hemen Şimdi Görmek ve Denemek İçin
-Masaüstündeki **`site kapı`** klasörünü açın ve **`baslat.bat`** dosyasına çift tıklayın.
-- Hiçbir paket indirme hatası olmadan **1 saniye içinde** ekranınızda uygulamanız açılacaktır!
-- Aynı ev/ofis ağına (Wi-Fi) bağlı **iPhone veya Android** telefonunuzun tarayıcısından siyah pencerede yazan adrese (örneğin `http://192.168.1.XX:3456`) girip **Ana Ekrana Ekle** diyerek telefonunuzda da anında tam ekran deneyebilirsiniz.
-- Masa başındayken denemek için uygulama içindeki **"🚘 Yaklaşma Test Simülatörü"** anahtarını açıp çubuğu **10 metrenin altına** çekerek kapının otomatik tetiklenmesini ve **80 metre uzaklaşınca** kilidin kendiliğinden sıfırlanmasını canlı izleyebilirsiniz.
+**https://site-kapisi-otomasyonu-main.vercel.app**
 
----
+Telefondan tarayıcıda bu adresi açın; menüden **Ana Ekrana Ekle** ile uygulama gibi kullanın.
 
-## 🔑 2. Smart Life Bağlantı Bilgileri Nereden Alınır?
-Uygulamanın alt menüsündeki **"🔑 Bağlantı Ayarı"** sekmesine herkes kendi bilgilerini girebilir:
+## Tek yapmanız gereken: Smart Life ID
 
-1. **Kapı Cihaz Numarası:**
-   - Telefonunuzdaki **Smart Life** uygulamasını açın -> Kapı cihazına dokunun -> Sağ üstteki **Kalem** simgesi -> **Cihaz Bilgileri** -> **Sanal ID** bilgisini kopyalayın.
-2. **Erişim Numarası ve Gizli Anahtar:**
-   - [iot.tuya.com](https://iot.tuya.com) adresinden ücretsiz geliştirici hesabı açıp **Cloud -> Create Cloud Project** menüsünden bölge olarak **Avrupa (Central Europe)** seçin.
-   - Verilen `Access ID` ve `Access Secret` bilgilerini uygulamanıza yapıştırın ve **Link Tuya App Account** sekmesindeki karekodu Smart Life uygulamanızdan okutun.
+Uygulama sizden **yalnızca tek bir şey** ister: **Smart Life ID**.
+
+- ❌ Başka hiçbir alan, anahtar veya ayar yok
+- ❌ Kurulum, paket indirme veya ek adım yok
+
+Bağlantı bilgileri uygulamanın içinde tutulur; kullanıcıya gösterilmez ve sorulmaz.
 
 ---
 
-## 📱 3. Doğrudan Android (`.apk`) ve iPhone (`.ipa`) Kurulum Dosyası Üretmek İçin
-Projenin içinde hem **Android** hem **iPhone (iOS)** arka plan konum izinlerini içeren hazır paketleme kurulumu (`.github/workflows/mobil-paket-uret.yml`) yer almaktadır:
-- Bu klasörü ücretsiz bir GitHub hesabına yüklediğiniz anda, bilgisayarınıza dev derleyici programlar kurmanıza gerek kalmadan **Android kurulum dosyanız (`.apk`)** ve **iPhone kurulum dosyanız (`.ipa`)** otomatik olarak üretilip indirmeye hazır hale gelir!
+## ▶️ Kullanım
+
+1. `baslat.bat` dosyasına çift tıklayın. Uygulama tarayıcıda açılır.
+2. **Tek Kurulum** alanına Smart Life ID'nizi yapıştırın ve **Kaydet**e basın.
+3. Bir kez, kapının önünde durup **"Site Kapısını Şimdi Aç"**a basın.
+   Kapı konumu otomatik öğrenilir; sizden konum bilgisi istenmez.
+4. **"Otomatik Açıcıyı Başlat"**a basın. Artık kapıya 10 m kala otomatik açılır,
+   80 m uzaklaştığınızda sistem yeniden kurulur.
+
+Masaüstünde denemek için **Yaklaşma Testi** anahtarını açıp çubuğu 10 m'nin altına çekebilirsiniz.
+
+---
+
+## 📱 Telefonda kullanım
+
+Aynı Wi-Fi'a bağlı telefonunuzdan, siyah pencerede yazan adresi (örn. `http://192.168.1.23:3456`) açın.
+Tarayıcı menüsünden **Ana Ekrana Ekle** deyin; tam ekran uygulama gibi çalışır.
+
+İsterseniz `Site_Kapisi_Otomasyonu.html` dosyasını doğrudan da açabilirsiniz: tek dosyadır,
+harici dosya veya paket kullanmaz.
+
+---
+
+## 🧪 Doğrulama
+
+```bash
+node test/tek-id-test.js
+```
+
+Test, yalnızca `smartLifeId` alanıyla tüm akışın çalıştığını ve arayüz mesajlarında
+teknik bağlantı bilgilerinin geçmediğini doğrular.

@@ -9,312 +9,164 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="ikon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="ikon.svg" />
-  <title>Site Kapısı Otomasyonu</title>
+  <title>Site Kapısı</title>
   <link rel="stylesheet" href="stil.css" />
 </head>
 <body>
-  <div id="bildirimBalonu" class="bildirim-balonu"></div>
+  <div id="bildirimBalonu" class="toast"></div>
 
-  <div class="uygulama-kapsayici">
-    <!-- ÜST BAŞLIK -->
-    <header class="ust-baslik">
-      <div>
-        <h1>🚗 Site Kapısı Otomasyonu</h1>
-        <p id="altBaslikBilgi">Smart Life • 10m Otomatik Açıcı</p>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">🚗</div>
+        <div>
+          <h1>Site Kapısı</h1>
+          <p>Smart Life • 10 m Otomatik Açıcı</p>
+        </div>
       </div>
-      <div id="servisEtiketi" class="durum-etiketi">○ DURDURULDU</div>
+      <div id="servisEtiketi" class="status-pill">DURDURULDU</div>
     </header>
 
-    <main class="icerik">
-      <!-- ==================== 1. EKRAN: CANLI RADAR ==================== -->
-      <section id="sekme-radar" class="sekme-icerik aktif">
-        <div id="radarKarti" class="radar-karti">
-          <div class="radar-halka">
-            <span class="mesafe-baslik">KAPIYA MESAFE</span>
-            <div id="mesafeDegeri" class="mesafe-deger">-- m</div>
+    <main>
+      <!-- ANA EKRAN -->
+      <section id="sekme-ana" class="sekme-icerik aktif">
+        <div id="radarKarti" class="hero">
+          <div class="radar">
+            <div class="radar-rings"><span></span><span></span><span></span></div>
+            <div class="radar-dot"></div>
+            <div class="radar-center">
+              <span class="radar-label">KAPIYA MESAFE</span>
+              <div id="mesafeDegeri" class="radar-value">--</div>
+              <span id="mesafeBirimi" class="radar-unit">METRE</span>
+            </div>
           </div>
-          <div id="durumAciklama" class="durum-aciklama">Konum takibi başlatılmaya hazır.</div>
-          <div id="hassasiyetBilgi" class="hassasiyet-bilgi">Hedef Açılma Mesafesi: ≤ 10 metre</div>
+          <div id="durumAciklama" class="hero-status">Smart Life ID'nizi girin.</div>
+          <div id="hassasiyetBilgi" class="hero-meta">Açılma Sınırı: ≤ 10 metre</div>
 
-          <div id="kilitKutusu" class="kilit-kutusu" style="display: none;">
-            <p id="kilitAciklama">
-              🔒 Kapı açıldıktan sonra tekrar açılmaması için koruma kilidi devreye girdi. Siteden 80m uzaklaştığınızda otomatik sıfırlanır.
-            </p>
-            <button class="buton-sari-kucuk" onclick="kilidiSifirla()">Kilidi Şimdi Sıfırla 🔓</button>
+          <div id="kilitKutusu" class="lock-note" style="display: none;">
+            <p id="kilitAciklama">Kapı açıldı. 80 metre uzaklaştığınızda otomatik yeniden kurulur.</p>
+            <button class="clear-btn" onclick="kilidiSifirla()">Kilidi Şimdi Sıfırla 🔓</button>
           </div>
         </div>
 
-        <!-- ARKA PLAN KONUM BAŞLAT / DURDUR -->
-        <button id="takipButonu" class="buton buton-yesil" onclick="takibiDegistir()">
-          🚀 10 Metre Otomatik Açıcıyı Başlat
+        <button id="takipButonu" class="btn btn-primary" onclick="takibiDegistir()">
+          🚀 Otomatik Açıcıyı Başlat
+        </button>
+        <button class="btn btn-ghost" onclick="kapiyiElleAc()">
+          🔓 Site Kapısını Şimdi Aç
         </button>
 
-        <!-- ELLE ŞİMDİ AÇ BUTONU -->
-        <button class="buton buton-mavi" onclick="kapiyiElleAc()">
-          🔓 Site Kapısını Şimdi Aç (Test)
-        </button>
-
-        <!-- MASAÜSTÜ VE TEST SİMÜLATÖRÜ -->
-        <div class="kart">
-          <div class="kart-baslik">
-            <span>🚘 Yaklaşma Test Simülatörü</span>
-            <input type="checkbox" id="simulatorAnahtari" class="anahtar" onchange="simulatorDegistir(this.checked)" />
+        <!-- TEK KURULUM ALANI -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-icon">🔑</div>
+            <div style="flex: 1;">
+              <h2>Tek Kurulum</h2>
+              <p>Smart Life ID'nizi girin. Başka bir şey girmenize gerek yok; kapı konumunu ve ayarları uygulama kendiliğinden halleder.</p>
+            </div>
           </div>
-          <p class="kart-aciklama">
-            Dışarı çıkmadan denemek için anahtarı açın ve çubuğu sola kaydırarak arabanızla kapıya 10 metre yaklaşmayı canlandırın!
-          </p>
-          <div id="simulatorAlani" style="display: none;">
+          <label class="field-label" for="girdiSmartLifeId">Smart Life ID</label>
+          <div class="input-wrap">
+            <span>🆔</span>
+            <input
+              type="text"
+              id="girdiSmartLifeId"
+              placeholder="Smart Life ID'nizi yapıştırın"
+              autocomplete="off"
+              autocapitalize="off"
+              spellcheck="false"
+              onchange="smartLifeIdKaydet()"
+            />
+          </div>
+          <button class="btn btn-save" onclick="smartLifeIdKaydet()">💾 ID'yi Kaydet</button>
+          <button class="btn btn-ghost" onclick="konumuSifirla()">📍 Kapı Konumunu Yeniden Öğren</button>
+        </div>
+
+        <!-- TEST SİMÜLATÖRÜ -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-icon">🚘</div>
+            <div style="flex: 1;">
+              <h2>Yaklaşma Testi</h2>
+              <p>Dışarı çıkmadan denemek için test modunu açın ve çubuğu 10 metrenin altına çekin.</p>
+            </div>
+          </div>
+          <div class="switches">
+            <span class="switch-label">Test modu</span>
+            <input type="checkbox" id="simulatorAnahtari" class="switch" onchange="simulatorDegistir(this.checked)" />
+          </div>
+          <div id="simulatorAlani" class="sim-area" style="display: none;">
             <input
               type="range"
               id="simulatorCubugu"
-              class="simulator-cubugu"
+              class="slider"
               min="0"
               max="120"
               value="95"
               oninput="simulatorMesafeGuncelle(this.value)"
             />
-            <div class="simulator-olcek">
-              <span>🎯 0m (Kapı Önü)</span>
-              <span>⚡ 10m (Açılır)</span>
-              <span>🔄 80m+ (Sıfırlanır)</span>
+            <div class="scale">
+              <span>0m (Kapı)</span>
+              <span>10m (Açılır)</span>
+              <span>80m+ (Sıfırlanır)</span>
             </div>
           </div>
-        </div>
-
-        <!-- KAPI KONUMU VE MESAFE AYARLARI -->
-        <div class="kart">
-          <div class="kart-baslik">📍 Site Kapısı Konumu & Mesafe</div>
-          <p class="kart-aciklama">
-            Site kapısının tam önünde dururken aşağıdaki mavi düğmeye basarak kapı noktasını kaydedebilirsiniz.
-          </p>
-
-          <button class="buton buton-acik-mavi" onclick="mevcutKonumuKapiYap()">
-            📍 Şu Anki Konumumu Site Kapısı Olarak Kaydet
-          </button>
-
-          <div class="iki-sutun">
-            <div>
-              <label class="etiket">Kapı Enlem (Latitude)</label>
-              <input type="number" step="any" id="girdiEnlem" class="girdi" />
-            </div>
-            <div>
-              <label class="etiket">Kapı Boylam (Longitude)</label>
-              <input type="number" step="any" id="girdiBoylam" class="girdi" />
-            </div>
-          </div>
-
-          <div class="iki-sutun">
-            <div>
-              <label class="etiket">Açılma Mesafesi (Metre)</label>
-              <input type="number" id="girdiAcilmaMesafesi" class="girdi" value="10" />
-            </div>
-            <div>
-              <label class="etiket">Tekrar Kurulma Uzaklığı (m)</label>
-              <input type="number" id="girdiSifirlamaMesafesi" class="girdi" value="80" />
-            </div>
-          </div>
-
-          <div class="anahtar-satiri">
-            <span>Kapıya Yaklaşınca Otomatik Aç</span>
-            <input type="checkbox" id="girdiOtomatikAktif" class="anahtar" checked onchange="ayarlariKaydetBildir(false)" />
-          </div>
-
-          <button class="buton buton-yesil" style="margin-top: 12px; margin-bottom: 0;" onclick="ayarlariKaydetBildir(true)">
-            💾 Konum ve Mesafeyi Kaydet
-          </button>
         </div>
       </section>
 
-      <!-- ==================== 2. EKRAN: SMART LIFE BAĞLANTISI ==================== -->
-      <section id="sekme-baglanti" class="sekme-icerik">
-        <div class="kart">
-          <div class="kart-baslik">🔑 Smart Life Bağlantı Bilgileri</div>
-          <p class="kart-aciklama">
-            Uygulamayı kullanan herkes kendi Smart Life (Tuya) bağlantı bilgilerini doğrudan buraya girebilir. Bilgiler yalnızca telefonunuzun kendi hafızasında saklanır.
-          </p>
-
-          <label class="etiket">Kapıyı Nasıl Tetikleyelim?</label>
-          <div class="secenek-grubu">
-            <button id="yontem-cihaz" class="secenek-dugmesi aktif" onclick="yontemSec('cihaz')">Smart Life Cihaz</button>
-            <button id="yontem-senaryo" class="secenek-dugmesi" onclick="yontemSec('senaryo')">Smart Life Senaryo</button>
-            <button id="yontem-ozelBaglanti" class="secenek-dugmesi" onclick="yontemSec('ozelBaglanti')">Özel Bağlantı</button>
-          </div>
-
-          <!-- TUYA ALANLARI -->
-          <div id="alanTuyaGenel">
-            <label class="etiket">Sunucu Bölgesi (Türkiye için Avrupa - EU seçilir)</label>
-            <div class="secenek-grubu">
-              <button id="bolge-eu" class="secenek-dugmesi aktif" onclick="bolgeSec('eu')">Avrupa (EU)</button>
-              <button id="bolge-us" class="secenek-dugmesi" onclick="bolgeSec('us')">Amerika (US)</button>
-              <button id="bolge-cn" class="secenek-dugmesi" onclick="bolgeSec('cn')">Çin (CN)</button>
-              <button id="bolge-in" class="secenek-dugmesi" onclick="bolgeSec('in')">Hindistan (IN)</button>
+      <!-- GEÇMİŞ -->
+      <section id="sekme-gecmis" class="sekme-icerik">
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-icon">📋</div>
+            <div style="flex: 1;">
+              <h2>Açılma Geçmişi</h2>
+              <p>Son işlemler yalnızca bu cihazda saklanır.</p>
             </div>
-
-            <label class="etiket">Erişim Numarası (Access ID / Client ID)</label>
-            <input type="text" id="girdiMusteriNo" class="girdi" placeholder="Örn: 8nhxyz1234567890abcd" autocomplete="off" />
-
-            <label class="etiket">Gizli Anahtar (Access Secret / Client Secret)</label>
-            <input type="password" id="girdiGizliAnahtar" class="girdi" placeholder="Gizli anahtarınızı yapıştırın" autocomplete="off" />
+            <button class="clear-btn" onclick="kayitlariTemizle()">Temizle</button>
           </div>
-
-          <!-- DOĞRUDAN CİHAZ ALANLARI -->
-          <div id="alanTuyaCihaz">
-            <label class="etiket">Kapı Cihaz Numarası (Smart Life Sanal ID / Device ID)</label>
-            <input type="text" id="girdiCihazNo" class="girdi" placeholder="Smart Life > Cihaz Bilgileri > Sanal ID" autocomplete="off" />
-
-            <button class="buton buton-ikincil" onclick="cihazKodlariniOtomatikBul()">
-              🔍 Cihazın Komut Kodunu Otomatik Bul
-            </button>
-
-            <div class="iki-sutun">
-              <div>
-                <label class="etiket">Komut Kodu</label>
-                <input type="text" id="girdiKomutKodu" class="girdi" value="switch_1" />
-              </div>
-              <div>
-                <label class="etiket">Gönderilecek Değer</label>
-                <input type="text" id="girdiKomutDegeri" class="girdi" value="true" />
-              </div>
-            </div>
-          </div>
-
-          <!-- SENARYO ALANLARI -->
-          <div id="alanTuyaSenaryo" style="display: none;">
-            <label class="etiket">Ev Numarası / Senaryo Numarası</label>
-            <input type="text" id="girdiSenaryoNo" class="girdi" placeholder="Örn: 14592831/ab82910xyz" autocomplete="off" />
-          </div>
-
-          <!-- ÖZEL BAĞLANTI ALANLARI -->
-          <div id="alanOzelBaglanti" style="display: none;">
-            <label class="etiket">Özel Tetikleme Adresi (IFTTT / Ev Otomasyon Adresi)</label>
-            <input type="url" id="girdiOzelBaglanti" class="girdi" placeholder="https://..." autocomplete="off" />
-          </div>
-
-          <button class="buton buton-yesil" style="margin-top: 16px;" onclick="ayarlariKaydetBildir(true)">
-            💾 Bağlantı Bilgilerini Kaydet
-          </button>
-
-          <button class="buton buton-mavi" style="margin-bottom: 0;" onclick="kapiyiElleAc()">
-            ⚡ Girilen Bilgilerle Kapıyı Şimdi Test Et
-          </button>
-        </div>
-      </section>
-
-      <!-- ==================== 3. EKRAN: KAYITLAR ==================== -->
-      <section id="sekme-kayitlar" class="sekme-icerik">
-        <div class="kart">
-          <div class="kart-baslik">
-            <span>📋 İşlem ve Açılma Geçmişi</span>
-            <button class="buton-sari-kucuk" style="background:#dc2626;" onclick="kayitlariTemizle()">Temizle</button>
-          </div>
-          <p class="kart-aciklama">Kapının ne zaman ve kaç metrede tetiklendiğini buradan takip edebilirsiniz.</p>
           <div id="kayitListesi"></div>
         </div>
       </section>
     </main>
 
-    <!-- ALT GEZİNME MENÜSÜ -->
-    <nav class="alt-menu">
-      <button id="menu-radar" class="alt-menu-dugme aktif" onclick="sekmeAc('radar')">
+    <nav class="bottom-nav">
+      <button id="menu-ana" class="nav-btn aktif" onclick="sekmeAc('ana')">
         <span class="ikon">📡</span>
-        <span>Canlı Radar</span>
+        <span>Ana Ekran</span>
       </button>
-      <button id="menu-baglanti" class="alt-menu-dugme" onclick="sekmeAc('baglanti')">
-        <span class="ikon">🔑</span>
-        <span>Bağlantı Ayarı</span>
-      </button>
-      <button id="menu-kayitlar" class="alt-menu-dugme" onclick="sekmeAc('kayitlar')">
+      <button id="menu-gecmis" class="nav-btn" onclick="sekmeAc('gecmis')">
         <span class="ikon">📋</span>
         <span>Geçmiş (<span id="kayitSayaci">0</span>)</span>
       </button>
     </nav>
   </div>
 
-  <script src="tuyaBaglantisi.js"></script>
+  <script src="baglanti-profili.js"></script>
+  <script src="smartLifeBaglantisi.js"></script>
   <script src="kapiMotoru.js"></script>
   <script>
-    let seciliYontem = 'cihaz';
-    let seciliBolge = 'eu';
-
-    function balonGoster(metin, renk = '#065f46') {
+    function balonGoster(metin, tur = 'basari') {
       const b = document.getElementById('bildirimBalonu');
       b.textContent = metin;
-      b.style.background = renk;
-      b.style.display = 'block';
+      b.className = 'toast show' + (tur === 'hata' ? ' hata' : tur === 'bilgi' ? ' bilgi' : '');
       clearTimeout(window._balonZamanlayici);
-      window._balonZamanlayici = setTimeout(() => { b.style.display = 'none'; }, 3200);
+      window._balonZamanlayici = setTimeout(() => { b.classList.remove('show'); }, 3200);
     }
 
     function sekmeAc(ad) {
-      ['radar', 'baglanti', 'kayitlar'].forEach((s) => {
+      ['ana', 'gecmis'].forEach((s) => {
         document.getElementById('sekme-' + s).classList.toggle('aktif', s === ad);
         document.getElementById('menu-' + s).classList.toggle('aktif', s === ad);
       });
     }
 
-    function yontemSec(yontem) {
-      seciliYontem = yontem;
-      ['cihaz', 'senaryo', 'ozelBaglanti'].forEach((y) => {
-        document.getElementById('yontem-' + y).classList.toggle('aktif', y === yontem);
-      });
-      document.getElementById('alanTuyaGenel').style.display = yontem === 'ozelBaglanti' ? 'none' : 'block';
-      document.getElementById('alanTuyaCihaz').style.display = yontem === 'cihaz' ? 'block' : 'none';
-      document.getElementById('alanTuyaSenaryo').style.display = yontem === 'senaryo' ? 'block' : 'none';
-      document.getElementById('alanOzelBaglanti').style.display = yontem === 'ozelBaglanti' ? 'block' : 'none';
-    }
-
-    function bolgeSec(bolge) {
-      seciliBolge = bolge;
-      ['eu', 'us', 'cn', 'in'].forEach((b) => {
-        document.getElementById('bolge-' + b).classList.toggle('aktif', b === bolge);
-      });
-    }
-
-    function formdanAyarlariOku() {
-      return {
-        tetiklemeYontemi: seciliYontem,
-        tuyaBolge: seciliBolge,
-        tuyaMusteriNo: document.getElementById('girdiMusteriNo').value.trim(),
-        tuyaGizliAnahtar: document.getElementById('girdiGizliAnahtar').value.trim(),
-        tuyaCihazNo: document.getElementById('girdiCihazNo').value.trim(),
-        tuyaKomutKodu: document.getElementById('girdiKomutKodu').value.trim() || 'switch_1',
-        tuyaKomutDegeri: document.getElementById('girdiKomutDegeri').value.trim() || 'true',
-        tuyaSenaryoNo: document.getElementById('girdiSenaryoNo').value.trim(),
-        ozelBaglantiAdresi: document.getElementById('girdiOzelBaglanti').value.trim(),
-        kapiEnlem: parseFloat(document.getElementById('girdiEnlem').value) || 41.0082,
-        kapiBoylam: parseFloat(document.getElementById('girdiBoylam').value) || 28.9784,
-        acilmaMesafesiMetre: parseFloat(document.getElementById('girdiAcilmaMesafesi').value) || 10,
-        sifirlamaMesafesiMetre: parseFloat(document.getElementById('girdiSifirlamaMesafesi').value) || 80,
-        beklemeSuresiSaniye: 45,
-        otomatikAcmaAktif: document.getElementById('girdiOtomatikAktif').checked,
-      };
-    }
-
-    function ayarlariFormaDoldur(ayar) {
-      yontemSec(ayar.tetiklemeYontemi || 'cihaz');
-      bolgeSec(ayar.tuyaBolge || 'eu');
-      document.getElementById('girdiMusteriNo').value = ayar.tuyaMusteriNo || '';
-      document.getElementById('girdiGizliAnahtar').value = ayar.tuyaGizliAnahtar || '';
-      document.getElementById('girdiCihazNo').value = ayar.tuyaCihazNo || '';
-      document.getElementById('girdiKomutKodu').value = ayar.tuyaKomutKodu || 'switch_1';
-      document.getElementById('girdiKomutDegeri').value = ayar.tuyaKomutDegeri || 'true';
-      document.getElementById('girdiSenaryoNo').value = ayar.tuyaSenaryoNo || '';
-      document.getElementById('girdiOzelBaglanti').value = ayar.ozelBaglantiAdresi || '';
-      document.getElementById('girdiEnlem').value = ayar.kapiEnlem;
-      document.getElementById('girdiBoylam').value = ayar.kapiBoylam;
-      document.getElementById('girdiAcilmaMesafesi').value = ayar.acilmaMesafesiMetre;
-      document.getElementById('girdiSifirlamaMesafesi').value = ayar.sifirlamaMesafesiMetre;
-      document.getElementById('girdiOtomatikAktif').checked = ayar.otomatikAcmaAktif !== false;
-    }
-
-    function ayarlariKaydetBildir(mesajGoster = true) {
-      const yeni = formdanAyarlariOku();
-      KapiMotoru.ayarlariKaydet(yeni);
-      document.getElementById('altBaslikBilgi').textContent =
-        `Smart Life • ${yeni.acilmaMesafesiMetre}m Otomatik Açıcı`;
-      if (mesajGoster) {
-        KapiMotoru.kayitEkle(`⚙️ Ayarlar kaydedildi (Hedef: ${yeni.acilmaMesafesiMetre}m, Sıfırlama: ${yeni.sifirlamaMesafesiMetre}m).`);
-        balonGoster('✅ Tüm ayarlar başarıyla kaydedildi!');
+    function smartLifeIdKaydet() {
+      const id = document.getElementById('girdiSmartLifeId').value.trim();
+      KapiMotoru.smartLifeIdKaydet(id);
+      if (id) {
+        KapiMotoru.kayitEkle('🔑 Smart Life ID kaydedildi.');
+        balonGoster('✅ Smart Life ID kaydedildi. Başka bir şey girmenize gerek yok!');
       }
       arayuzuGuncelle(KapiMotoru.durumuYukle());
     }
@@ -322,139 +174,145 @@
     function arayuzuGuncelle(durum) {
       const ayar = KapiMotoru.ayarlariYukle();
       const mesafe = durum.sonMesafeMetre;
-      const icerideMi = mesafe !== null && mesafe <= ayar.acilmaMesafesiMetre;
+      const iceride = Number.isFinite(mesafe) && mesafe <= ayar.acilmaMesafesiMetre;
 
-      document.getElementById('mesafeDegeri').textContent = mesafe !== null ? `${mesafe} m` : '-- m';
+      const mesafeDegeri = document.getElementById('mesafeDegeri');
+      const mesafeBirimi = document.getElementById('mesafeBirimi');
+      if (mesafe === null || mesafe === undefined || !Number.isFinite(mesafe)) {
+        mesafeDegeri.textContent = '--';
+        mesafeBirimi.textContent = 'METRE';
+      } else if (mesafe >= 1000) {
+        mesafeDegeri.textContent = (mesafe / 1000).toFixed(1);
+        mesafeBirimi.textContent = 'KM';
+      } else {
+        mesafeDegeri.textContent = String(mesafe);
+        mesafeBirimi.textContent = 'METRE';
+      }
       document.getElementById('durumAciklama').textContent = durum.durumMesaji || '';
-      document.getElementById('radarKarti').classList.toggle('hedef-icinde', icerideMi);
-
-      const sapmaYazi = durum.sonSapmaMetre ? `GPS Sapma: ±${durum.sonSapmaMetre}m | ` : '';
+      document.getElementById('radarKarti').classList.toggle('is-near', iceride);
       document.getElementById('hassasiyetBilgi').textContent =
-        `${sapmaYazi}Açılma Sınırı: ≤ ${ayar.acilmaMesafesiMetre}m`;
+        `${durum.sonSapmaMetre ? 'GPS Sapma: ±' + durum.sonSapmaMetre + 'm | ' : ''}Açılma Sınırı: ≤ ${ayar.acilmaMesafesiMetre}m`;
 
       const kilitKutusu = document.getElementById('kilitKutusu');
       kilitKutusu.style.display = durum.korumaKilidiAktif ? 'block' : 'none';
       document.getElementById('kilitAciklama').textContent =
-        `🔒 Kapı açıldıktan sonra koruma kilidi devreye girdi. Siteden ${ayar.sifirlamaMesafesiMetre}m uzaklaştığınızda otomatik sıfırlanır.`;
+        `Kapı açıldı. ${ayar.sifirlamaMesafesiMetre} metre uzaklaştığınızda otomatik yeniden kurulur.`;
 
-      // Servis durumu etiketi ve buton
+      const aktif = KapiMotoru.calisiyorMu || KapiMotoru.simulasyonModu;
       const etiket = document.getElementById('servisEtiketi');
-      const takipBtn = document.getElementById('takipButonu');
-      const aktifMi = KapiMotoru.calisiyorMu || KapiMotoru.simulasyonModu;
+      etiket.textContent = aktif ? 'TAKİP AKTİF' : 'DURDURULDU';
+      etiket.classList.toggle('is-active', aktif);
 
-      etiket.textContent = aktifMi ? '● TAKİP AKTİF' : '○ DURDURULDU';
-      etiket.classList.toggle('aktif', aktifMi);
-
+      const buton = document.getElementById('takipButonu');
       if (KapiMotoru.calisiyorMu) {
-        takipBtn.textContent = '⏹️ Otomatik Kapı Açıcıyı Durdur';
-        takipBtn.className = 'buton buton-kirmizi';
+        buton.textContent = '⏹️ Otomatik Kapı Açıcıyı Durdur';
+        buton.className = 'btn btn-danger';
       } else {
-        takipBtn.textContent = `🚀 ${ayar.acilmaMesafesiMetre} Metre Otomatik Açıcıyı Başlat`;
-        takipBtn.className = 'buton buton-yesil';
+        buton.textContent = `🚀 ${ayar.acilmaMesafesiMetre} Metre Otomatik Açıcıyı Başlat`;
+        buton.className = 'btn btn-primary';
       }
 
-      // Kayıtlar
-      const kayitlar = durum.kayitlar || [];
-      document.getElementById('kayitSayaci').textContent = kayitlar.length;
+      document.getElementById('kayitSayaci').textContent = (durum.kayitlar || []).length;
       const liste = document.getElementById('kayitListesi');
-      if (kayitlar.length === 0) {
-        liste.innerHTML = '<p class="kart-aciklama">Henüz bir işlem kaydı yok.</p>';
-      } else {
-        liste.innerHTML = kayitlar.map((k) => `<div class="kayit-elemani">${k}</div>`).join('');
-      }
+      liste.innerHTML = (durum.kayitlar || []).length
+        ? `<div class="timeline">${durum.kayitlar.map((k) => `<div class="timeline-item"><span class="dot"></span>${k}</div>`).join('')}</div>`
+        : '<p class="empty-note">Henüz bir işlem kaydı yok.</p>';
     }
 
     async function takibiDegistir() {
-      ayarlariKaydetBildir(false);
+      const ayar = KapiMotoru.ayarlariYukle();
+      if (!ayar.smartLifeId) {
+        balonGoster('Önce Smart Life ID\'nizi girin.', 'hata');
+        return;
+      }
       if (KapiMotoru.calisiyorMu) {
         await KapiMotoru.takibiDurdur();
-        balonGoster('⏹️ Konum takibi durduruldu.', '#475569');
+        balonGoster('⏹️ Konum takibi durduruldu.', 'bilgi');
       } else {
         const sonuc = await KapiMotoru.takibiBaslat();
-        balonGoster(sonuc.mesaj, sonuc.basarili ? '#065f46' : '#b91c1c');
+        balonGoster(sonuc.mesaj, sonuc.basarili ? 'basari' : 'hata');
       }
       arayuzuGuncelle(KapiMotoru.durumuYukle());
     }
 
     async function kapiyiElleAc() {
-      ayarlariKaydetBildir(false);
       const ayar = KapiMotoru.ayarlariYukle();
-      balonGoster('📡 Smart Life kapı açma komutu gönderiliyor...', '#1d4ed8');
-      KapiMotoru.kayitEkle('👆 Elle kapı açma düğmesine basıldı...');
-      const sonuc = await window.TuyaBaglantisi.kapiyiAc(ayar);
-      if (sonuc.basarili) {
-        KapiMotoru.kayitEkle('✅ ' + sonuc.mesaj);
-        balonGoster('🚗 ' + sonuc.mesaj, '#065f46');
-      } else {
-        KapiMotoru.kayitEkle('❌ ' + sonuc.mesaj);
-        balonGoster('⚠️ ' + sonuc.mesaj, '#b91c1c');
-      }
-    }
-
-    function mevcutKonumuKapiYap() {
-      if (!('geolocation' in navigator)) {
-        balonGoster('Cihazınızda konum özelliği bulunamadı.', '#b91c1c');
+      if (!ayar.smartLifeId) {
+        balonGoster('Önce Smart Life ID\'nizi girin.', 'hata');
         return;
       }
-      balonGoster('📍 Hassas konumunuz alınıyor...', '#0284c7');
-      navigator.geolocation.getCurrentPosition(
-        (poz) => {
-          const enlem = Number(poz.coords.latitude.toFixed(6));
-          const boylam = Number(poz.coords.longitude.toFixed(6));
-          document.getElementById('girdiEnlem').value = enlem;
-          document.getElementById('girdiBoylam').value = boylam;
-          ayarlariKaydetBildir(false);
-          KapiMotoru.kayitEkle(`📍 Site kapısı konumu kaydedildi: ${enlem}, ${boylam}`);
-          balonGoster('📍 Bulunduğunuz nokta site kapısı olarak kaydedildi!', '#065f46');
-        },
-        (hata) => {
-          balonGoster('Konum alınamadı. Lütfen tarayıcı/telefon konum iznini açın.', '#b91c1c');
-        },
-        { enableHighAccuracy: true, timeout: 10000 }
-      );
-    }
 
-    async function cihazKodlariniOtomatikBul() {
-      ayarlariKaydetBildir(false);
-      const ayar = KapiMotoru.ayarlariYukle();
-      balonGoster('🔍 Cihaz bilgileri sorgulanıyor...', '#0284c7');
-      const sonuc = await window.TuyaBaglantisi.cihazKodlariniBul(ayar);
-      alert(sonuc.bilgi);
-    }
+      // Kapı konumu sorulmaz; kapı önünde yapılan bu testle kendiliğinden öğrenilir.
+      if (navigator.geolocation && !KapiMotoru.simulasyonModu) {
+        try {
+          const poz = await new Promise((coz, red) =>
+            navigator.geolocation.getCurrentPosition(coz, red, { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 })
+          );
+          const hassasiyet = poz.coords.accuracy;
+          if (!Number.isFinite(hassasiyet) || hassasiyet <= 50) {
+            KapiMotoru.kapiyiKalibreEt(poz.coords.latitude, poz.coords.longitude);
+          } else {
+            balonGoster('Konum hassasiyeti düşük; kapı konumu güncellenmedi.', 'hata');
+          }
+        } catch { /* konum izni yoksa mevcut kalibrasyon kullanılır */ }
+      }
 
-    function kilidiSifirla() {
-      KapiMotoru.korumaKilidiniSifirla();
-      balonGoster('🔓 Koruma kilidi sıfırlandı!', '#065f46');
-    }
-
-    function kayitlariTemizle() {
-      const durum = KapiMotoru.durumuYukle();
-      durum.kayitlar = [];
-      KapiMotoru.durumuKaydet(durum);
+      balonGoster('📡 Kapı açılıyor...', 'bilgi');
+      KapiMotoru.kayitEkle('👆 Kapıyı şimdi açma düğmesine basıldı.');
+      const sonuc = await SmartLifeBaglantisi.kapiyiAc(ayar);
+      if (sonuc.basarili) {
+        KapiMotoru.kayitEkle('✅ ' + sonuc.mesaj);
+        balonGoster('🚗 ' + sonuc.mesaj);
+      } else {
+        KapiMotoru.kayitEkle('⚠️ ' + sonuc.mesaj);
+        balonGoster('⚠️ ' + sonuc.mesaj, 'hata');
+      }
+      arayuzuGuncelle(KapiMotoru.durumuYukle());
     }
 
     function simulatorDegistir(aktif) {
       KapiMotoru.simulasyonModu = aktif;
       document.getElementById('simulatorAlani').style.display = aktif ? 'block' : 'none';
       if (aktif) {
-        const baslangicMesafe = parseFloat(document.getElementById('simulatorCubugu').value);
-        KapiMotoru.kayitEkle('🚘 Yaklaşma Test Simülatörü açıldı.');
-        KapiMotoru.mesafeyiDegerlendir(baslangicMesafe, 2);
+        // Gerçek kapı koordinatı asla değiştirilmez; test tamamen sanal mesafe ile yapılır.
+        KapiMotoru.mesafeyiDegerlendir(parseFloat(document.getElementById('simulatorCubugu').value), 2);
       } else {
-        KapiMotoru.kayitEkle('🚘 Yaklaşma Test Simülatörü kapatıldı.');
-        arayuzuGuncelle(KapiMotoru.durumuYukle());
+        const durum = KapiMotoru.durumuYukle();
+        durum.sonMesafeMetre = null;
+        durum.sonSapmaMetre = null;
+        durum.durumMesaji = KapiMotoru.kalibrasyonVarMi()
+          ? 'Gerçek konum takibi bir sonraki GPS sinyaliyle güncellenecek.'
+          : 'Kapı konumu öğreniliyor: kapı önünde bir kez "Şimdi Aç"a basın.';
+        KapiMotoru.durumuKaydet(durum);
+        arayuzuGuncelle(durum);
       }
+    }
+
+    function konumuSifirla() {
+      const durum = KapiMotoru.kalibrasyonuSifirla();
+      balonGoster('📍 Kapı konumu sıfırlandı. Kapı önünde "Şimdi Aç"a basın.', 'bilgi');
+      arayuzuGuncelle(durum);
     }
 
     function simulatorMesafeGuncelle(deger) {
       KapiMotoru.mesafeyiDegerlendir(parseFloat(deger), 2);
     }
 
-    // Başlangıç yüklemesi
+    function kilidiSifirla() {
+      KapiMotoru.korumaKilidiniSifirla();
+      balonGoster('🔓 Koruma kilidi sıfırlandı!');
+    }
+
+    function kayitlariTemizle() {
+      const durum = KapiMotoru.durumuYukle();
+      durum.kayitlar = [];
+      KapiMotoru.durumuKaydet(durum);
+      arayuzuGuncelle(KapiMotoru.durumuYukle());
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       KapiMotoru.arayuzYenileici = arayuzuGuncelle;
-      const ayar = KapiMotoru.ayarlariYukle();
-      ayarlariFormaDoldur(ayar);
+      document.getElementById('girdiSmartLifeId').value = KapiMotoru.ayarlariYukle().smartLifeId || '';
       arayuzuGuncelle(KapiMotoru.durumuYukle());
     });
   </script>

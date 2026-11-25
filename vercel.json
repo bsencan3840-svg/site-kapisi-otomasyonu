@@ -1,0 +1,18 @@
+{
+  "framework": null,
+  "outputDirectory": "uygulama",
+  "cleanUrls": true,
+  "functions": {
+    "api/kapi-ac.js": {
+      "maxDuration": 10
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache" }
+      ]
+    }
+  ]
+}
