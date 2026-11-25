@@ -1,0 +1,21 @@
+{
+  "name": "site-kapisi-otomasyonu",
+  "version": "1.0.0",
+  "description": "Site kapısına 10 metre yaklaşınca Smart Life üzerinden otomatik açan iOS ve Android uygulaması",
+  "main": "sunucu.js",
+  "scripts": {
+    "baslat": "node sunucu.js",
+    "start": "node sunucu.js",
+    "mobil-hazirla": "npx cap add android && npx cap add ios && npx cap sync",
+    "mobil-guncelle": "npx cap sync"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/core": "^6.2.0",
+    "@capacitor/ios": "^6.2.0",
+    "@capacitor-community/background-geolocation": "^1.2.21"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.2.0"
+  }
+}
