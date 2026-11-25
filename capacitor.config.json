@@ -1,0 +1,16 @@
+{
+  "appId": "com.sitekapisi.otomasyon",
+  "appName": "Site Kapısı",
+  "webDir": "uygulama",
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  },
+  "ios": {
+    "contentInset": "always"
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}
